@@ -15,6 +15,7 @@
  */
 
 var SENHA_INICIAL_ADMIN = 'troque-esta-senha';   // usada só na primeira configuração (troca obrigatória no 1º acesso)
+var PLANILHA_ID_FIXA = '';   // opcional: ID de uma planilha existente (projeto criado fora da planilha)
 var FUSO = 'America/Sao_Paulo';
 var SESSAO_HORAS = 14;
 var MAX_TENTATIVAS = 5, BLOQUEIO_MIN = 10;
@@ -65,6 +66,7 @@ function configurar() {
   var props = PropertiesService.getScriptProperties();
   var ss = null;
   try { ss = SpreadsheetApp.getActiveSpreadsheet(); } catch (e) { }
+  if (!ss && PLANILHA_ID_FIXA) ss = SpreadsheetApp.openById(PLANILHA_ID_FIXA);
   if (!ss && props.getProperty('PLANILHA_ID')) ss = SpreadsheetApp.openById(props.getProperty('PLANILHA_ID'));
   if (!ss) ss = SpreadsheetApp.create('Frete Interno - Apontamentos OCOREN');
   props.setProperty('PLANILHA_ID', ss.getId());
@@ -93,6 +95,9 @@ function configurar() {
     props.setProperty('PASTA_ID', pasta.getId());
   }
   try { ss.setSpreadsheetTimeZone(FUSO); } catch (e) { }
+  try { if (/^(Planilha sem t|Untitled)/.test(ss.getName())) ss.rename('Frete Interno - Apontamentos OCOREN'); } catch (e) { }
+  try { var p1 = ss.getSheetByName('Página1') || ss.getSheetByName('Sheet1');
+        if (p1 && p1.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(p1); } catch (e) { }
   var msg = 'Configuração concluída. Agora publique em Implantar > Nova implantação > App da Web.';
   try { SpreadsheetApp.getUi().alert(msg); } catch (e) { Logger.log(msg); }
   return msg;
