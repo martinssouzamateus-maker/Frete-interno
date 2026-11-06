@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block corpo %}
+<main class="pagina">
+  <div class="secao-titulo"><h2>{{ msg }}</h2></div>
+  <a class="btn btn-sec" href="{{ url_for('inicio') }}">Voltar ao apontamento</a>
+</main>
+{% endblock %}

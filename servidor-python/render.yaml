@@ -1,0 +1,27 @@
+# Implantação no Render (render.com): New > Blueprint > escolha este repositório.
+# Um único processo (-w 1) com várias threads: o sistema usa travas internas
+# para gerar os TXT e gravar a planilha sem conflito entre motoristas.
+services:
+  - type: web
+    name: frete-interno
+    runtime: python
+    plan: starter            # o plano gratuito não tem disco persistente: os dados seriam perdidos
+    region: ohio
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -w 1 --threads 8 --timeout 60 -b 0.0.0.0:$PORT app:app
+    healthCheckPath: /login
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: DADOS_DIR
+        value: /var/data
+      - key: HTTPS
+        value: "1"
+      - key: FUSO_HORARIO
+        value: America/Sao_Paulo
+      - key: ADMIN_SENHA_INICIAL
+        sync: false          # o Render pede este valor na criação
+    disk:
+      name: dados
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titulo %}Entrar{% endblock %}
+{% block corpo %}
+<main class="login-pg">
+  <img class="grafismo" src="{{ url_for('static', filename='grafismo.png') }}" alt="">
+  <div class="login-box">
+    <img class="logo" src="{{ url_for('static', filename='logo.png') }}" alt="Calibre">
+    <h1>Frete Interno</h1>
+    <p class="sub">Apontamento de entregas e ocorrências das notas fiscais.</p>
+    {% if erro %}<div class="aviso erro" role="alert">{{ erro }}</div>{% endif %}
+    <form method="post" autocomplete="on">
+      <div class="campo">
+        <label for="login">Usuário</label>
+        <input id="login" name="login" type="text" autocapitalize="none" autocorrect="off" autocomplete="username" required value="{{ request.form.get('login','') }}">
+      </div>
+      <div class="campo">
+        <label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn-pri bloco" type="submit">Entrar</button>
+    </form>
+  </div>
+  <div class="login-rodape">Esqueceu a senha? Fale com o administrador do sistema.</div>
+</main>
+{% endblock %}

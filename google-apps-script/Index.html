@@ -1,0 +1,881 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+/* Frete Interno - identidade visual Calibre (template CS / Calibre Lab) */
+:root {
+  --magenta: #E60B85;
+  --magenta-esc: #A21369;
+  --magenta-claro: #FCE4F1;
+  --marinho: #312E4C;
+  --marinho-2: #5B5878;
+  --nevoa: #EEF2FE;
+  --aco: #9EB5D1;
+  --linha: #DCE2F0;
+  --branco: #FFFFFF;
+  --ok: #1F7A4D;
+  --ok-fundo: #E3F4EA;
+  --alerta: #8A5A00;
+  --alerta-fundo: #FFF3D6;
+  --erro: #B3123E;
+  --erro-fundo: #FDE6EC;
+  --raio: 10px;
+  --fonte: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--fonte);
+  font-size: 16px;
+  line-height: 1.45;
+  color: var(--marinho);
+  background: var(--branco);
+}
+a { color: var(--magenta-esc); }
+:focus-visible { outline: 3px solid var(--magenta); outline-offset: 2px; }
+h1, h2, h3 { margin: 0; line-height: 1.2; }
+.oculto { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ------------------------------------------------ topo */
+.topo {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--branco);
+  border-bottom: 2px solid var(--magenta);
+}
+.topo-in {
+  max-width: 1080px; margin: 0 auto; padding: 10px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.topo img { height: 24px; width: auto; display: block; }
+.topo .app { white-space: nowrap; font-weight: 700; font-size: 15px; color: var(--marinho-2); border-left: 1px solid var(--linha); padding-left: 12px; }
+.topo .esp { flex: 1; }
+.menu-btn {
+  border: 1px solid var(--linha); background: var(--branco); color: var(--marinho);
+  border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; gap: 8px; max-width: 52vw;
+}
+.menu-btn .nome { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.avatar {
+  width: 24px; height: 24px; border-radius: 50%; background: var(--magenta); color: #fff;
+  display: grid; place-items: center; font-size: 12px; font-weight: 700; flex: none;
+}
+.menu {
+  position: absolute; right: 16px; top: 52px; background: #fff; border: 1px solid var(--linha);
+  border-radius: var(--raio); box-shadow: 0 10px 30px rgba(49,46,76,.16); min-width: 200px; overflow: hidden;
+}
+.menu a { display: block; padding: 12px 16px; color: var(--marinho); text-decoration: none; }
+.menu a:hover, .menu a:focus-visible { background: var(--nevoa); }
+
+/* ------------------------------------------------ estrutura */
+.pagina { max-width: 560px; margin: 0 auto; padding: 16px 16px 120px; }
+.pagina.larga { max-width: 1080px; }
+.secao-titulo {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding-bottom: 8px; border-bottom: 2px solid var(--magenta); margin: 28px 0 14px;
+}
+.secao-titulo h2 { font-size: 19px; }
+.secao-titulo .aux { font-size: 14px; color: var(--marinho-2); }
+
+.status {
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--marinho-2);
+  margin: 2px 0 0;
+}
+.status .ponto { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); flex: none; }
+.status.salvando .ponto { background: var(--aco); }
+.status.offline .ponto { background: #E0A100; }
+.status.erro .ponto { background: var(--erro); }
+
+/* ------------------------------------------------ formulario */
+.form { background: var(--nevoa); border-radius: 14px; padding: 18px 16px 16px; }
+.form.editando { background: var(--magenta-claro); }
+.campo { margin-bottom: 14px; }
+.campo label, .rotulo { display: block; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.campo .dica { font-weight: 400; color: var(--marinho-2); }
+.linha-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.linha-nf { display: grid; grid-template-columns: 1fr 84px; gap: 10px; }
+input[type=text], input[type=password], input[type=date], input[type=time], input[type=number],
+input:not([type]), select, textarea {
+  width: 100%; font: inherit; font-size: 17px; color: var(--marinho);
+  background: var(--branco); border: 1.5px solid var(--linha); border-radius: var(--raio);
+  padding: 12px 12px; min-height: 50px; appearance: none; -webkit-appearance: none;
+}
+textarea { min-height: 70px; resize: vertical; font-size: 16px; }
+select { background-image: linear-gradient(45deg, transparent 50%, var(--marinho) 50%), linear-gradient(135deg, var(--marinho) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 22px, calc(100% - 13px) 22px; background-size: 5px 5px; background-repeat: no-repeat; padding-right: 34px; }
+input:focus, select:focus, textarea:focus { border-color: var(--magenta); outline: none; box-shadow: 0 0 0 3px rgba(230,11,133,.15); }
+input.nf { font-size: 24px; font-weight: 700; letter-spacing: .04em; }
+.invalido { border-color: var(--erro) !important; }
+
+/* seletor de ocorrencia */
+.ocorr-btn {
+  width: 100%; display: flex; align-items: center; gap: 12px; text-align: left;
+  background: var(--branco); border: 1.5px solid var(--linha); border-radius: var(--raio);
+  padding: 10px 12px; min-height: 58px; font: inherit; color: var(--marinho); cursor: pointer;
+}
+.ocorr-btn:focus-visible { border-color: var(--magenta); }
+.ocorr-btn .vazio { color: var(--marinho-2); }
+.ocorr-btn .seta { margin-left: auto; color: var(--marinho-2); flex: none; }
+.cod {
+  flex: none; min-width: 44px; height: 44px; border-radius: 22px; padding: 0 8px;
+  background: var(--magenta); color: #fff; font-weight: 700; font-size: 15px;
+  display: grid; place-items: center; letter-spacing: .02em;
+}
+.cod.cinza { background: var(--marinho); }
+.cod.peq { min-width: 38px; height: 38px; font-size: 13px; }
+.favoritas { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0 2px; scrollbar-width: none; }
+.favoritas::-webkit-scrollbar { display: none; }
+.chip {
+  flex: none; border: 1.5px solid var(--linha); background: var(--branco); color: var(--marinho);
+  border-radius: 999px; padding: 7px 12px 7px 7px; font: inherit; font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; gap: 7px; max-width: 230px;
+}
+.chip b { background: var(--nevoa); color: var(--magenta-esc); border-radius: 999px; padding: 2px 7px; font-size: 12px; }
+.chip span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chip[aria-pressed=true] { border-color: var(--magenta); background: var(--magenta); color: #fff; }
+.chip[aria-pressed=true] b { background: rgba(255,255,255,.25); color: #fff; }
+
+.agora-btn { background: none; border: 0; color: var(--magenta-esc); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; padding: 0; }
+
+details.mais { margin: 4px 0 14px; }
+details.mais summary { cursor: pointer; font-size: 14px; font-weight: 700; color: var(--marinho-2); padding: 6px 0; list-style: none; }
+details.mais summary::-webkit-details-marker { display: none; }
+details.mais summary::before { content: "+ "; color: var(--magenta); }
+details.mais[open] summary::before { content: "– "; }
+
+/* ------------------------------------------------ botoes */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font: inherit; font-weight: 700; font-size: 16px; border-radius: var(--raio);
+  padding: 13px 18px; min-height: 50px; cursor: pointer; border: 1.5px solid transparent; text-decoration: none;
+}
+.btn-pri { background: var(--magenta); color: #fff; }
+.btn-pri:hover { background: var(--magenta-esc); }
+.btn-pri:disabled { background: var(--aco); cursor: not-allowed; }
+.btn-sec { background: var(--branco); color: var(--marinho); border-color: var(--linha); }
+.btn-sec:hover { border-color: var(--marinho-2); }
+.btn-marinho { background: var(--marinho); color: #fff; }
+.btn-marinho:hover { background: #24223a; }
+.btn-marinho:disabled { background: var(--aco); cursor: not-allowed; }
+.btn-txt { background: none; border: 0; color: var(--magenta-esc); font: inherit; font-weight: 700; cursor: pointer; padding: 6px 4px; }
+.btn-perigo { color: var(--erro); }
+.bloco { width: 100%; }
+.acoes-form { display: flex; gap: 10px; }
+.acoes-form .btn-pri { flex: 1; }
+
+/* ------------------------------------------------ lista de notas */
+.lista { list-style: none; margin: 0; padding: 0; }
+.item {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: start;
+  padding: 14px 0; border-bottom: 1px solid var(--linha);
+}
+.item .nf-num { font-size: 18px; font-weight: 700; }
+.item .desc { font-size: 14px; color: var(--marinho); margin-top: 1px; }
+.item .meta { font-size: 13px; color: var(--marinho-2); margin-top: 3px; }
+.item .tag { display: inline-block; font-size: 12px; font-weight: 700; border-radius: 6px; padding: 1px 7px; margin-left: 6px; vertical-align: 2px; }
+.tag.pend { background: var(--alerta-fundo); color: var(--alerta); }
+.item .acoes { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.item.realce { animation: realce 1.6s ease-out; }
+@keyframes realce { from { background: var(--magenta-claro); } to { background: transparent; } }
+.vazio-lista { text-align: center; color: var(--marinho-2); padding: 26px 12px; border: 1.5px dashed var(--linha); border-radius: 14px; font-size: 15px; }
+
+.envios { list-style: none; padding: 0; margin: 0; }
+.envios li { display: flex; justify-content: space-between; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--linha); font-size: 14px; }
+.envios .arq { font-family: var(--fonte); font-weight: 700; word-break: break-all; }
+.envios .quando { color: var(--marinho-2); font-size: 13px; }
+
+/* ------------------------------------------------ barra inferior */
+.barra {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 15;
+  background: rgba(255,255,255,.96); border-top: 1px solid var(--linha);
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+  backdrop-filter: blur(6px);
+}
+.barra-in { max-width: 560px; margin: 0 auto; }
+
+/* ------------------------------------------------ avisos */
+.aviso { border-radius: var(--raio); padding: 12px 14px; font-size: 14px; margin: 0 0 14px; }
+.aviso.ok { background: var(--ok-fundo); color: var(--ok); }
+.aviso.atencao { background: var(--alerta-fundo); color: var(--alerta); }
+.aviso.erro { background: var(--erro-fundo); color: var(--erro); }
+.toast {
+  position: fixed; left: 50%; bottom: 92px; transform: translateX(-50%) translateY(20px); opacity: 0;
+  background: var(--marinho); color: #fff; border-radius: 999px; padding: 11px 18px; font-size: 14px;
+  z-index: 40; transition: .25s; max-width: calc(100vw - 32px); text-align: center; pointer-events: none;
+}
+.toast.vis { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.erro { background: var(--erro); }
+
+/* ------------------------------------------------ folhas (modais) */
+.fundo { position: fixed; inset: 0; background: rgba(49,46,76,.45); z-index: 30; display: flex; align-items: flex-end; justify-content: center; }
+.folha {
+  background: #fff; width: 100%; max-width: 560px; border-radius: 18px 18px 0 0;
+  max-height: 88vh; display: flex; flex-direction: column; animation: sobe .22s ease-out;
+}
+@media (min-width: 700px) { .fundo { align-items: center; } .folha { border-radius: 18px; } }
+@keyframes sobe { from { transform: translateY(30px); opacity: .4; } }
+.folha-cab { padding: 16px 16px 12px; border-bottom: 2px solid var(--magenta); display: flex; align-items: center; gap: 10px; }
+.folha-cab h2 { font-size: 18px; flex: 1; }
+.fechar { background: var(--nevoa); border: 0; border-radius: 50%; width: 36px; height: 36px; font-size: 20px; cursor: pointer; color: var(--marinho); }
+.folha-busca { padding: 12px 16px; }
+.folha-corpo { overflow-y: auto; padding: 0 16px 16px; }
+.folha-rodape { padding: 12px 16px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--linha); display: flex; gap: 10px; }
+.folha-rodape .btn { flex: 1; }
+.grupo-tit { font-size: 13px; font-weight: 700; color: var(--marinho-2); margin: 14px 0 4px; }
+.opcao {
+  width: 100%; display: flex; gap: 12px; align-items: center; text-align: left; font: inherit; color: var(--marinho);
+  background: none; border: 0; border-bottom: 1px solid var(--linha); padding: 10px 2px; cursor: pointer; font-size: 15px;
+}
+.opcao:hover, .opcao:focus-visible { background: var(--nevoa); }
+.opcao[aria-selected=true] { font-weight: 700; }
+.opcao[aria-selected=true] .cod { background: var(--marinho); }
+.sucesso { text-align: center; padding: 22px 6px 6px; }
+.sucesso .check { width: 64px; height: 64px; border-radius: 50%; background: var(--magenta); color: #fff; display: grid; place-items: center; margin: 0 auto 14px; font-size: 32px; }
+.sucesso .arq { font-weight: 700; word-break: break-all; background: var(--nevoa); border-radius: 8px; padding: 10px; margin: 12px 0; font-size: 14px; }
+
+/* ------------------------------------------------ login */
+.login-pg { min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; position: relative; overflow: hidden; }
+.login-pg .grafismo { position: absolute; right: -150px; top: -90px; width: 360px; max-width: 80vw; pointer-events: none; }
+@media (min-width: 700px) { .login-pg .grafismo { width: 520px; right: -120px; top: -80px; } }
+.login-box { position: relative; width: 100%; max-width: 400px; margin: auto; padding: 190px 20px 40px; }
+@media (min-width: 700px) { .login-box { padding-top: 60px; } }
+.login-box .logo { height: 40px; width: auto; display: block; margin-bottom: 34px; }
+.login-box h1 { font-size: 28px; margin-bottom: 6px; }
+.login-box p.sub { color: var(--marinho-2); margin: 0 0 24px; padding-bottom: 14px; border-bottom: 2px solid var(--magenta); }
+.login-rodape { position: relative; text-align: center; font-size: 12px; color: var(--marinho-2); padding: 16px; }
+
+/* ------------------------------------------------ admin */
+.abas { display: flex; gap: 4px; border-bottom: 1px solid var(--linha); margin: 6px 0 18px; overflow-x: auto; }
+.abas a { padding: 12px 14px; text-decoration: none; color: var(--marinho-2); font-weight: 700; font-size: 15px; border-bottom: 3px solid transparent; white-space: nowrap; }
+.abas a[aria-current=page] { color: var(--marinho); border-color: var(--magenta); }
+.numeros { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.numero { background: var(--nevoa); border-radius: 12px; padding: 14px; }
+.numero b { display: block; font-size: 28px; color: var(--magenta); }
+.numero span { font-size: 13px; color: var(--marinho-2); }
+.tabela-wrap { overflow-x: auto; border: 1px solid var(--linha); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th { background: var(--magenta); color: #fff; text-align: left; padding: 10px 12px; font-weight: 700; white-space: nowrap; }
+td { padding: 10px 12px; border-bottom: 1px solid var(--linha); vertical-align: top; }
+tr:nth-child(even) td { background: #FBFCFF; }
+.grade-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 16px; }
+.inline-form { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.inline-form input { min-height: 38px; padding: 6px 10px; font-size: 14px; width: 140px; }
+.inline-form .btn { min-height: 38px; padding: 6px 12px; font-size: 14px; }
+.badge { display: inline-block; border-radius: 6px; padding: 2px 8px; font-size: 12px; font-weight: 700; background: var(--nevoa); }
+.badge.admin { background: var(--marinho); color: #fff; }
+.badge.inativo { background: var(--erro-fundo); color: var(--erro); }
+.caminho { font-size: 13px; color: var(--marinho-2); word-break: break-all; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 360px) { .topo .app { display: none; } }
+
+.carregando { display: grid; place-items: center; min-height: 60vh; color: var(--marinho-2); }
+.giro { width: 36px; height: 36px; border-radius: 50%; border: 4px solid var(--nevoa); border-top-color: var(--magenta); animation: giro 1s linear infinite; margin: 0 auto 12px; }
+@keyframes giro { to { transform: rotate(360deg); } }
+.btn[aria-busy=true] { opacity: .7; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<!-- ===================================================== topo -->
+<header class="topo oculto" id="topo">
+  <div class="topo-in">
+    <img src="data:image/png;base64,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" alt="Calibre">
+    <span class="app">Frete Interno</span>
+    <span class="esp"></span>
+    <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+      <span class="avatar" aria-hidden="true" id="avatar"></span><span class="nome" id="nomeTopo"></span>
+    </button>
+    <nav class="menu oculto" id="menu">
+      <a href="#" data-ir="ap">Apontamento</a>
+      <a href="#" data-ir="admin" id="menuAdmin" class="oculto">Administração</a>
+      <a href="#" data-ir="senha">Trocar senha</a>
+      <a href="#" data-ir="sair">Sair</a>
+    </nav>
+  </div>
+</header>
+
+<div class="carregando" id="vCarregando"><div><div class="giro"></div>Carregando…</div></div>
+
+<!-- ===================================================== login -->
+<main class="login-pg oculto" id="vLogin">
+  <img class="grafismo" src="data:image/png;base64,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" alt="">
+  <div class="login-box">
+    <img class="logo" src="data:image/png;base64,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" alt="Calibre">
+    <h1>Frete Interno</h1>
+    <p class="sub">Apontamento de entregas e ocorrências das notas fiscais.</p>
+    <div class="aviso erro oculto" id="loginErro" role="alert"></div>
+    <form id="fLogin" autocomplete="on">
+      <div class="campo"><label for="login">Usuário</label>
+        <input id="login" name="login" type="text" autocapitalize="none" autocorrect="off" autocomplete="username" required></div>
+      <div class="campo"><label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" autocomplete="current-password" required></div>
+      <button class="btn btn-pri bloco" type="submit" id="loginBtn">Entrar</button>
+    </form>
+  </div>
+  <div class="login-rodape">Esqueceu a senha? Fale com o administrador do sistema.</div>
+</main>
+
+<!-- ===================================================== trocar senha -->
+<main class="pagina oculto" id="vSenha">
+  <div class="secao-titulo"><h2>Trocar senha</h2></div>
+  <div class="aviso atencao oculto" id="senhaObrig">Antes de continuar, crie uma senha pessoal. Ela substitui a senha inicial que você recebeu.</div>
+  <div class="aviso erro oculto" id="senhaErro" role="alert"></div>
+  <form class="form" id="fSenha">
+    <div class="campo"><label for="sAtual">Senha atual</label><input id="sAtual" type="password" autocomplete="current-password" required></div>
+    <div class="campo"><label for="sNova">Nova senha <span class="dica">(mínimo 6 caracteres)</span></label><input id="sNova" type="password" autocomplete="new-password" minlength="6" required></div>
+    <div class="campo"><label for="sConf">Repita a nova senha</label><input id="sConf" type="password" autocomplete="new-password" required></div>
+    <button class="btn btn-pri bloco" id="senhaBtn">Salvar nova senha</button>
+  </form>
+</main>
+
+<!-- ===================================================== apontamento -->
+<main class="pagina oculto" id="vAp">
+  <div class="secao-titulo" style="margin-top:8px">
+    <h2 id="tituloForm">Nova ocorrência</h2>
+    <p class="status" id="status" aria-live="polite"><span class="ponto"></span><span id="statusTxt">Tudo salvo</span></p>
+  </div>
+
+  <form class="form" id="form" novalidate autocomplete="off">
+    <div class="linha-nf">
+      <div class="campo"><label for="numero_nf">Número da NF</label>
+        <input id="numero_nf" class="nf" inputmode="numeric" pattern="[0-9]*" maxlength="9" placeholder="000000" required></div>
+      <div class="campo"><label for="serie_nf">Série</label><input id="serie_nf" inputmode="numeric" maxlength="3"></div>
+    </div>
+    <div class="campo oculto" id="campoEmissor"><label for="cnpj_emissor">Emissor da NF</label><select id="cnpj_emissor"></select></div>
+
+    <div class="campo">
+      <span class="rotulo" id="rotOcorr">Ocorrência</span>
+      <button type="button" class="ocorr-btn" id="ocorrBtn" aria-labelledby="rotOcorr ocorrTxt">
+        <span class="cod cinza" id="ocorrCod">?</span>
+        <span id="ocorrTxt" class="vazio">Toque para escolher na lista</span>
+        <span class="seta" aria-hidden="true">▾</span>
+      </button>
+      <input type="hidden" id="cod_ocorrencia">
+      <div class="favoritas" id="favoritas" aria-label="Ocorrências mais usadas"></div>
+    </div>
+
+    <div class="linha-2">
+      <div class="campo"><label for="data_ocorrencia">Data</label><input id="data_ocorrencia" type="date" required></div>
+      <div class="campo"><label for="hora_ocorrencia">Horário</label><input id="hora_ocorrencia" type="time" required></div>
+    </div>
+    <div style="margin:-6px 0 14px"><button type="button" class="agora-btn" id="agoraBtn">Usar data e hora de agora</button></div>
+
+    <div class="campo" id="campoRecebedor"><label for="recebedor">Recebido por <span class="dica">(nome de quem recebeu)</span></label>
+      <input id="recebedor" type="text" maxlength="60" autocapitalize="characters"></div>
+    <div class="campo"><label for="observacao">Observação <span class="dica">(opcional)</span></label>
+      <textarea id="observacao" maxlength="120" rows="2"></textarea></div>
+
+    <details class="mais">
+      <summary>Romaneio e CT-e</summary>
+      <div class="campo" style="margin-top:8px"><label for="romaneio">Romaneio / viagem</label><input id="romaneio" type="text" maxlength="20"></div>
+      <div class="linha-2">
+        <div class="campo"><label for="filial_cte">Filial CT-e</label><input id="filial_cte" type="text" maxlength="10"></div>
+        <div class="campo"><label for="serie_cte">Série CT-e</label><input id="serie_cte" inputmode="numeric" maxlength="5"></div>
+      </div>
+      <div class="campo"><label for="numero_cte">Número CT-e</label><input id="numero_cte" inputmode="numeric" maxlength="12"></div>
+    </details>
+
+    <div class="aviso erro oculto" id="erroForm" role="alert"></div>
+    <div class="acoes-form">
+      <button type="button" class="btn btn-sec oculto" id="cancelarBtn">Cancelar</button>
+      <button type="submit" class="btn btn-pri" id="salvarBtn">Adicionar NF</button>
+    </div>
+  </form>
+
+  <div class="secao-titulo"><h2>Notas deste apontamento</h2><span class="aux" id="qtd">0</span></div>
+  <ul class="lista" id="lista"></ul>
+  <div class="vazio-lista" id="vazio">Nenhuma nota ainda. Preencha a NF acima e toque em <b>Adicionar NF</b>; cada nota é salva na hora.</div>
+
+  <div id="blocoEnvios" class="oculto">
+    <div class="secao-titulo"><h2>Meus envios</h2><span class="aux" id="qtdEnvios"></span></div>
+    <ul class="envios" id="envios"></ul>
+  </div>
+
+  <div class="barra"><div class="barra-in">
+    <button class="btn btn-marinho bloco" id="encerrarBtn" disabled>Encerrar e gerar arquivo</button>
+  </div></div>
+</main>
+
+<!-- ===================================================== admin -->
+<main class="pagina larga oculto" id="vAdmin">
+  <div class="secao-titulo" style="margin-top:8px"><h2>Administração</h2>
+    <span class="aux"><a href="#" id="linkPlanilha" target="_blank" rel="noopener">Abrir planilha</a> · <a href="#" id="linkPasta" target="_blank" rel="noopener">Pasta dos TXT</a></span></div>
+  <div id="admMsg"></div>
+  <div class="numeros" id="admNumeros"></div>
+  <nav class="abas" id="abas">
+    <a href="#" data-aba="lotes">Arquivos gerados</a>
+    <a href="#" data-aba="abertos">Em aberto</a>
+    <a href="#" data-aba="usuarios">Usuários</a>
+    <a href="#" data-aba="config">Configurações</a>
+  </nav>
+  <div id="admConteudo"></div>
+</main>
+
+<!-- ===================================================== folhas -->
+<div class="fundo oculto" id="folhaOcorr" role="dialog" aria-modal="true" aria-labelledby="tOcorr">
+  <div class="folha">
+    <div class="folha-cab"><h2 id="tOcorr">Escolha a ocorrência</h2><button class="fechar" data-fechar aria-label="Fechar">×</button></div>
+    <div class="folha-busca"><input id="busca" type="text" placeholder="Buscar por código ou descrição" aria-label="Buscar ocorrência"></div>
+    <div class="folha-corpo" id="listaOcorr" role="listbox" aria-labelledby="tOcorr"></div>
+  </div>
+</div>
+<div class="fundo oculto" id="folhaEnc" role="dialog" aria-modal="true" aria-labelledby="tEnc">
+  <div class="folha">
+    <div class="folha-cab"><h2 id="tEnc">Encerrar apontamento?</h2><button class="fechar" data-fechar aria-label="Fechar">×</button></div>
+    <div class="folha-corpo" id="encCorpo" style="padding-top:14px"></div>
+    <div class="folha-rodape" id="encRodape"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var ENTREGUE = ["001", "002", "024", "031", "104", "105"];
+  var CAMPOS = ["numero_nf", "serie_nf", "cnpj_emissor", "cod_ocorrencia", "data_ocorrencia", "hora_ocorrencia",
+    "recebedor", "observacao", "romaneio", "filial_cte", "serie_cte", "numero_cte"];
+  var S = { token: null, usuario: null, dados: null, registros: [], editandoId: null, enviando: false, oc: {}, aba: "lotes" };
+
+  // ------------------------------------------------------------ armazenamento local (com reserva em memória)
+  var mem = {};
+  function ler(k, p) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : p; } catch (e) { return k in mem ? mem[k] : p; } }
+  function gravar(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+  function apagar(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) { } }
+  function kFila() { return "fi_fila_" + S.usuario.id; }
+  function kRasc() { return "fi_rascunho_" + S.usuario.id; }
+  function fila() { return ler(kFila(), []); }
+
+  // ------------------------------------------------------------ chamadas ao servidor
+  function run(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (res, rej) {
+      google.script.run
+        .withSuccessHandler(function (r) {
+          r = r || {};
+          if (r.sessao === false) { sairLocal("Sua sessão expirou. Entre novamente."); var e0 = new Error(r.erro); e0.sessao = true; return rej(e0); }
+          if (r.erro) { var e = new Error(r.erro); e.servidor = true; return rej(e); }
+          res(r);
+        })
+        .withFailureHandler(function (err) { var e = new Error("Sem conexão com o servidor."); e.rede = true; e.det = err; rej(e); })
+        [fn].apply(null, args);
+    });
+  }
+
+  // ------------------------------------------------------------ utilitários
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function agoraData() { var d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function agoraHora() { var d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function br(iso) { return iso ? iso.slice(8, 10) + "/" + iso.slice(5, 7) + "/" + iso.slice(0, 4) : ""; }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function nfCurta(n) { return String(n || "").replace(/^0+(?=\d)/, ""); }
+  var tT;
+  function toast(m, erro) { var t = $("toast"); t.textContent = m; t.className = "toast vis" + (erro ? " erro" : ""); clearTimeout(tT); tT = setTimeout(function () { t.className = "toast"; }, 3200); }
+  function status(tipo, txt) { $("status").className = "status " + (tipo || ""); $("statusTxt").textContent = txt; }
+  function ocupado(btn, sim, txt) { btn.setAttribute("aria-busy", sim ? "true" : "false"); if (txt) btn.textContent = txt; }
+  function baixar(nome, conteudo) {
+    var blob = new Blob([conteudo], { type: "text/plain" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nome;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function baixarLote(id, btn) {
+    if (btn) ocupado(btn, true);
+    run("baixarTxt", S.token, id).then(function (r) { baixar(r.nome, r.conteudo); })
+      .catch(function (e) { toast(e.message, true); }).then(function () { if (btn) ocupado(btn, false); });
+  }
+
+  // ------------------------------------------------------------ navegação
+  var VIEWS = ["vCarregando", "vLogin", "vSenha", "vAp", "vAdmin"];
+  function mostrar(v) {
+    VIEWS.forEach(function (x) { $(x).classList.toggle("oculto", x !== v); });
+    $("topo").classList.toggle("oculto", v === "vLogin" || v === "vCarregando");
+    window.scrollTo(0, 0);
+  }
+  function ir(dest) {
+    $("menu").classList.add("oculto");
+    if (dest === "sair") { run("sair", S.token).catch(function () { }); return sairLocal(); }
+    if (dest === "senha") return telaSenha(false);
+    if (dest === "admin") return telaAdmin();
+    return telaAp();
+  }
+  document.querySelectorAll("[data-ir]").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); ir(a.dataset.ir); }); });
+  $("menuBtn").addEventListener("click", function (e) { e.stopPropagation(); var o = $("menu").classList.toggle("oculto"); this.setAttribute("aria-expanded", !o); });
+  document.addEventListener("click", function () { $("menu").classList.add("oculto"); });
+
+  function definirUsuario(u) {
+    S.usuario = u;
+    $("avatar").textContent = (u.nome || "?").slice(0, 1).toUpperCase();
+    $("nomeTopo").textContent = (u.nome || "").split(" ")[0];
+    $("menuAdmin").classList.toggle("oculto", u.perfil !== "admin");
+  }
+  function sairLocal(msg) {
+    apagar("fi_token"); S.token = null; S.usuario = null;
+    $("senha").value = "";
+    $("loginErro").textContent = msg || ""; $("loginErro").classList.toggle("oculto", !msg);
+    mostrar("vLogin");
+  }
+
+  // ------------------------------------------------------------ login
+  $("fLogin").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var b = $("loginBtn"); ocupado(b, true, "Entrando…");
+    run("login", $("login").value, $("senha").value).then(function (r) {
+      S.token = r.token; gravar("fi_token", r.token); definirUsuario(r.usuario);
+      $("loginErro").classList.add("oculto"); $("senha").value = "";
+      if (r.usuario.trocar_senha) telaSenha(true); else telaAp();
+    }).catch(function (er) {
+      $("loginErro").textContent = er.rede ? "Sem conexão. Verifique a internet e tente de novo." : er.message;
+      $("loginErro").classList.remove("oculto");
+    }).then(function () { ocupado(b, false, "Entrar"); });
+  });
+
+  // ------------------------------------------------------------ trocar senha
+  function telaSenha(obrig) {
+    ["sAtual", "sNova", "sConf"].forEach(function (i) { $(i).value = ""; });
+    $("senhaObrig").classList.toggle("oculto", !obrig); $("senhaErro").classList.add("oculto");
+    mostrar("vSenha");
+  }
+  $("fSenha").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var b = $("senhaBtn"); ocupado(b, true);
+    run("trocarSenha", S.token, $("sAtual").value, $("sNova").value, $("sConf").value).then(function (r) {
+      definirUsuario(r.usuario); toast("Senha alterada"); telaAp();
+    }).catch(function (er) { $("senhaErro").textContent = er.message; $("senhaErro").classList.remove("oculto"); })
+      .then(function () { ocupado(b, false); });
+  });
+
+  // ------------------------------------------------------------ tela de apontamento
+  function telaAp() {
+    if (S.usuario && S.usuario.trocar_senha) return telaSenha(true);
+    mostrar("vCarregando");
+    run("iniciar", S.token).then(function (d) {
+      S.dados = d; S.oc = {}; d.ocorrencias.forEach(function (o) { S.oc[o.codigo] = o.descricao; });
+      definirUsuario(d.usuario);
+      if (d.usuario.trocar_senha) return telaSenha(true);
+      montarAp(d); mostrar("vAp"); enviarFila();
+    }).catch(function (e) {
+      if (e.sessao) return;
+      mostrar("vAp"); status("offline", "Sem conexão"); if (S.dados) render();
+    });
+  }
+
+  function montarAp(d) {
+    $("serie_nf").defaultValue = d.serie_padrao; $("filial_cte").defaultValue = d.filial_cte; $("serie_cte").defaultValue = d.serie_cte;
+    $("data_ocorrencia").max = d.hoje;
+    var sel = $("cnpj_emissor");
+    sel.innerHTML = d.emitentes.map(function (e) { return '<option value="' + e.cnpj + '">' + esc(e.nome) + " – " + e.cnpj + "</option>"; }).join("");
+    $("campoEmissor").classList.toggle("oculto", d.emitentes.length < 2);
+    $("favoritas").innerHTML = d.favoritas.map(function (c) {
+      return '<button type="button" class="chip" data-cod="' + c + '" aria-pressed="false"><b>' + c + "</b><span>" + esc(S.oc[c]) + "</span></button>";
+    }).join("");
+    S.registros = d.registros;
+    var r = ler(kRasc(), null);
+    $("form").reset();
+    if (r) preencher(r); else escolher("", true);
+    if (!$("data_ocorrencia").value) $("data_ocorrencia").value = agoraData();
+    if (!$("hora_ocorrencia").value) $("hora_ocorrencia").value = agoraHora();
+    if (S.editandoId) sairEdicao();
+    render();
+    var env = d.lotes || [];
+    $("blocoEnvios").classList.toggle("oculto", !env.length);
+    $("qtdEnvios").textContent = "últimos " + env.length;
+    $("envios").innerHTML = env.map(function (l) {
+      return '<li><div><div class="arq">' + esc(l.arquivo_txt) + '</div><div class="quando">' + esc(l.encerrado_em) + " · " + l.qtd + " NF" + (l.qtd !== 1 ? "s" : "") +
+        '</div></div><button class="btn-txt" data-baixar="' + l.id + '">Baixar</button></li>';
+    }).join("");
+  }
+  $("envios").addEventListener("click", function (e) { var b = e.target.closest("[data-baixar]"); if (b) baixarLote(+b.dataset.baixar, b); });
+
+  function valores() { var v = {}; CAMPOS.forEach(function (c) { v[c] = $(c).value.trim(); }); return v; }
+  function preencher(v) { CAMPOS.forEach(function (c) { if (v[c] != null) $(c).value = v[c]; }); escolher(v.cod_ocorrencia || "", true); }
+  function salvarRascunho() { if (!S.editandoId && S.usuario) gravar(kRasc(), valores()); }
+
+  function escolher(cod, silencioso) {
+    $("cod_ocorrencia").value = cod;
+    var tem = !!S.oc[cod];
+    $("ocorrCod").textContent = tem ? cod : "?"; $("ocorrCod").className = "cod" + (tem ? "" : " cinza");
+    $("ocorrTxt").textContent = tem ? S.oc[cod] : "Toque para escolher na lista"; $("ocorrTxt").className = tem ? "" : "vazio";
+    $("ocorrBtn").classList.remove("invalido");
+    document.querySelectorAll("#favoritas .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.cod === cod ? "true" : "false"); });
+    $("campoRecebedor").classList.toggle("oculto", tem && ENTREGUE.indexOf(cod) < 0);
+    if (!silencioso) salvarRascunho();
+  }
+  function validar(v) {
+    var erros = [];
+    document.querySelectorAll(".invalido").forEach(function (e) { e.classList.remove("invalido"); });
+    if (!/^\d{1,9}$/.test(v.numero_nf) || +v.numero_nf === 0) { erros.push("Informe o número da NF."); $("numero_nf").classList.add("invalido"); }
+    if (!S.oc[v.cod_ocorrencia]) { erros.push("Escolha a ocorrência."); $("ocorrBtn").classList.add("invalido"); }
+    if (!v.data_ocorrencia) { erros.push("Selecione a data."); $("data_ocorrencia").classList.add("invalido"); }
+    else if (v.data_ocorrencia > agoraData()) { erros.push("A data não pode ser futura."); $("data_ocorrencia").classList.add("invalido"); }
+    if (!v.hora_ocorrencia) { erros.push("Selecione o horário."); $("hora_ocorrencia").classList.add("invalido"); }
+    return erros;
+  }
+  function mostrarErro(m) { $("erroForm").textContent = m || ""; $("erroForm").classList.toggle("oculto", !m); }
+  function limparAposSalvar() {
+    ["numero_nf", "recebedor", "observacao", "numero_cte"].forEach(function (c) { $(c).value = ""; });
+    $("hora_ocorrencia").value = agoraHora(); salvarRascunho(); $("numero_nf").focus();
+  }
+  function sairEdicao() {
+    S.editandoId = null;
+    $("form").classList.remove("editando"); $("tituloForm").textContent = "Nova ocorrência";
+    $("salvarBtn").textContent = "Adicionar NF"; $("cancelarBtn").classList.add("oculto"); mostrarErro("");
+    var r = ler(kRasc(), null);
+    if (r) preencher(r); else { $("form").reset(); escolher("", true); $("data_ocorrencia").value = agoraData(); $("hora_ocorrencia").value = agoraHora(); }
+  }
+  function editar(id) {
+    var r = S.registros.filter(function (x) { return x.id === id; })[0]; if (!r) return;
+    salvarRascunho(); S.editandoId = id;
+    var v = {}; CAMPOS.forEach(function (c) { v[c] = r[c] == null ? "" : r[c]; }); v.numero_nf = nfCurta(r.numero_nf);
+    preencher(v);
+    $("form").classList.add("editando"); $("tituloForm").textContent = "Editando NF " + nfCurta(r.numero_nf);
+    $("salvarBtn").textContent = "Salvar alteração"; $("cancelarBtn").classList.remove("oculto");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  $("form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (S.enviando) return;
+    var v = valores(), erros = validar(v);
+    if (erros.length) { mostrarErro(erros.join(" ")); return; }
+    mostrarErro(""); S.enviando = true; $("salvarBtn").disabled = true; status("salvando", "Salvando…");
+    var fim = function () { S.enviando = false; $("salvarBtn").disabled = false; if (!$("erroForm").textContent) render(); };
+    if (S.editandoId) {
+      var idEd = S.editandoId;
+      run("editar", S.token, idEd, v).then(function () { toast("Alteração salva"); sairEdicao(); return carregar(idEd); })
+        .catch(function (e) { mostrarErro(e.rede ? "Sem conexão. A alteração não foi salva; tente de novo." : e.message); status("erro", "Não salvo"); })
+        .then(fim);
+      return;
+    }
+    v.client_uid = uid();
+    run("criar", S.token, v).then(function (j) {
+      toast(j.aviso ? j.aviso : "NF " + nfCurta(j.registro.numero_nf) + " salva", !!j.aviso);
+      limparAposSalvar(); return carregar(j.registro.id);
+    }).catch(function (e) {
+      if (e.sessao) return;
+      if (!e.rede) { mostrarErro(e.message); status("erro", "Não salvo"); return; }
+      var f = fila(); f.push(v); gravar(kFila(), f);
+      toast("Sem conexão. NF guardada no celular e será enviada automaticamente.");
+      limparAposSalvar();
+    }).then(fim);
+  });
+  $("cancelarBtn").addEventListener("click", sairEdicao);
+  $("agoraBtn").addEventListener("click", function () { $("data_ocorrencia").value = agoraData(); $("hora_ocorrencia").value = agoraHora(); salvarRascunho(); });
+  CAMPOS.forEach(function (c) { $(c).addEventListener("input", salvarRascunho); $(c).addEventListener("change", salvarRascunho); });
+  $("numero_nf").addEventListener("input", function () { this.value = this.value.replace(/\D/g, "").slice(0, 9); });
+
+  // ------------------------------------------------------------ folhas
+  function abrir(id) { $(id).classList.remove("oculto"); document.body.style.overflow = "hidden"; }
+  function fechar(id) { $(id).classList.add("oculto"); document.body.style.overflow = ""; }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-fechar]"); if (b) { var f = b.closest(".fundo"); if (!f.dataset.travado) fechar(f.id); }
+  });
+  document.querySelectorAll(".fundo").forEach(function (f) { f.addEventListener("click", function (e) { if (e.target === f && !f.dataset.travado) fechar(f.id); }); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") document.querySelectorAll(".fundo:not(.oculto)").forEach(function (f) { if (!f.dataset.travado) fechar(f.id); }); });
+
+  function normal(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function opcaoHTML(o, atual) {
+    return '<button type="button" class="opcao" role="option" data-cod="' + o.codigo + '" aria-selected="' + (o.codigo === atual) + '"><span class="cod peq">' + o.codigo + "</span><span>" + esc(o.descricao) + "</span></button>";
+  }
+  function listarOcorr() {
+    var q = normal($("busca").value.trim()), atual = $("cod_ocorrencia").value, html = "";
+    var achados = S.dados.ocorrencias.filter(function (o) { return !q || o.codigo.indexOf(q) === 0 || normal(o.descricao).indexOf(q) >= 0; });
+    if (!q && S.dados.favoritas.length) {
+      html += '<div class="grupo-tit">Mais usadas</div>';
+      S.dados.favoritas.forEach(function (c) { html += opcaoHTML({ codigo: c, descricao: S.oc[c] }, atual); });
+      html += '<div class="grupo-tit">Todas as ocorrências</div>';
+    }
+    achados.forEach(function (o) { html += opcaoHTML(o, atual); });
+    if (!achados.length) html = '<p class="vazio-lista" style="margin-top:12px">Nenhuma ocorrência encontrada para “' + esc($("busca").value) + "”.</p>";
+    $("listaOcorr").innerHTML = html;
+  }
+  $("ocorrBtn").addEventListener("click", function () { $("busca").value = ""; listarOcorr(); abrir("folhaOcorr"); $("listaOcorr").scrollTop = 0; });
+  $("busca").addEventListener("input", listarOcorr);
+  $("listaOcorr").addEventListener("click", function (e) { var b = e.target.closest(".opcao"); if (!b) return; escolher(b.dataset.cod); fechar("folhaOcorr"); });
+  $("favoritas").addEventListener("click", function (e) { var b = e.target.closest(".chip"); if (b) escolher(b.dataset.cod); });
+
+  // ------------------------------------------------------------ lista
+  function render(realceId) {
+    if (!S.usuario) return;
+    var f = fila(), html = "";
+    f.slice().reverse().forEach(function (v) {
+      html += '<li class="item"><span class="cod peq">' + esc(v.cod_ocorrencia) + '</span><div><div class="nf-num">NF ' + esc(nfCurta(v.numero_nf)) +
+        '<span class="tag pend">aguardando conexão</span></div><div class="desc">' + esc(S.oc[v.cod_ocorrencia]) + '</div><div class="meta">' + br(v.data_ocorrencia) + " às " + esc(v.hora_ocorrencia) + "</div></div><span></span></li>";
+    });
+    S.registros.forEach(function (r) {
+      var meta = br(r.data_ocorrencia) + " às " + esc(r.hora_ocorrencia) + (r.serie_nf ? " · série " + esc(r.serie_nf) : "");
+      if (r.recebedor) meta += "<br>Recebido por " + esc(r.recebedor);
+      if (r.observacao) meta += "<br>" + esc(r.observacao);
+      html += '<li class="item' + (r.id === realceId ? " realce" : "") + '"><span class="cod peq">' + r.cod_ocorrencia + '</span><div><div class="nf-num">NF ' + esc(nfCurta(r.numero_nf)) +
+        '</div><div class="desc">' + esc(r.descricao_ocorrencia) + '</div><div class="meta">' + meta + '</div></div><div class="acoes"><button class="btn-txt" data-editar="' + r.id +
+        '">Editar</button><button class="btn-txt btn-perigo" data-excluir="' + r.id + '">Excluir</button></div></li>';
+    });
+    $("lista").innerHTML = html;
+    var total = S.registros.length + f.length;
+    $("qtd").textContent = total + (total === 1 ? " nota" : " notas");
+    $("vazio").classList.toggle("oculto", total > 0);
+    var b = $("encerrarBtn");
+    b.disabled = !S.registros.length || f.length > 0;
+    b.textContent = f.length ? "Aguardando envio de " + f.length + " nota" + (f.length > 1 ? "s" : "") :
+      (S.registros.length ? "Encerrar e gerar arquivo (" + S.registros.length + ")" : "Encerrar e gerar arquivo");
+    if (f.length) status("offline", f.length + " no celular, aguardando conexão");
+    else if (!S.enviando) status("", "Tudo salvo");
+  }
+  $("lista").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.editar) editar(+b.dataset.editar);
+    if (b.dataset.excluir) {
+      if (b.dataset.confirmar) {
+        var id = +b.dataset.excluir; ocupado(b, true);
+        run("excluir", S.token, id).then(function () { toast("NF excluída"); if (S.editandoId === id) sairEdicao(); return carregar(); })
+          .catch(function (er) { toast(er.message, true); ocupado(b, false); });
+      } else {
+        b.dataset.confirmar = "1"; b.textContent = "Confirmar";
+        setTimeout(function () { if (b.isConnected) { delete b.dataset.confirmar; b.textContent = "Excluir"; } }, 3500);
+      }
+    }
+  });
+  function carregar(realceId) {
+    return run("abertos", S.token).then(function (j) { S.registros = j.registros; render(realceId); })
+      .catch(function (e) { if (e.rede) status("offline", "Sem conexão"); render(); });
+  }
+
+  var sincronizando = false;
+  function enviarFila() {
+    if (!S.usuario || !S.token) return;
+    var f = fila(); if (!f.length || sincronizando) return;
+    sincronizando = true;
+    var v = f[0];
+    run("criar", S.token, v).then(function () {
+      var g = fila(); g.shift(); gravar(kFila(), g); sincronizando = false;
+      if (g.length) enviarFila(); else { toast("Notas pendentes enviadas"); carregar(); }
+    }).catch(function (e) {
+      sincronizando = false;
+      if (e.servidor) { var g = fila(); g.shift(); gravar(kFila(), g); preencher(v); mostrarErro("NF " + v.numero_nf + " não foi aceita: " + e.message); render(); }
+    });
+  }
+  window.addEventListener("online", enviarFila);
+  setInterval(enviarFila, 15000);
+  setInterval(function () { if (!document.hidden && S.token && !S.editandoId && !$("vAp").classList.contains("oculto")) carregar(); }, 60000);
+
+  // ------------------------------------------------------------ encerrar
+  $("encerrarBtn").addEventListener("click", function () {
+    var n = S.registros.length, por = {};
+    S.registros.forEach(function (r) { por[r.cod_ocorrencia] = (por[r.cod_ocorrencia] || 0) + 1; });
+    $("tEnc").textContent = "Encerrar apontamento?";
+    $("encCorpo").innerHTML = "<p style='margin:0 0 6px'>Será gerado o arquivo OCOREN com <b>" + n + " nota" + (n > 1 ? "s" : "") +
+      "</b>. Depois de encerrado, este apontamento não poderá ser alterado.</p><ul class='lista'>" +
+      Object.keys(por).sort().map(function (c) { return '<li class="item" style="padding:8px 0"><span class="cod peq">' + c + "</span><div>" + esc(S.oc[c]) + "</div><b>" + por[c] + "</b></li>"; }).join("") + "</ul>";
+    $("encRodape").innerHTML = '<button class="btn btn-sec" data-fechar>Voltar</button><button class="btn btn-pri" id="confirmaEnc">Encerrar e gerar arquivo</button>';
+    abrir("folhaEnc");
+  });
+  $("encRodape").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.id === "novoAp") { fechar("folhaEnc"); return telaAp(); }
+    if (b.id === "baixarNovo") return baixarLote(+b.dataset.lote, b);
+    if (b.id !== "confirmaEnc") return;
+    ocupado(b, true, "Gerando arquivo…"); $("folhaEnc").dataset.travado = "1";
+    run("encerrar", S.token).then(function (j) {
+      $("tEnc").textContent = "Apontamento encerrado";
+      $("encCorpo").innerHTML = '<div class="sucesso"><div class="check" aria-hidden="true">✓</div><p style="margin:0">' + j.qtd + " nota" + (j.qtd > 1 ? "s enviadas e registradas" : " enviada e registrada") +
+        ' na planilha.</p><div class="arq">' + esc(j.arquivo) + '</div><p style="margin:0;font-size:14px;color:var(--marinho-2)">O arquivo foi salvo na pasta do Google Drive.</p></div>';
+      $("encRodape").innerHTML = '<button class="btn btn-sec" id="baixarNovo" data-lote="' + j.lote + '">Baixar TXT</button><button class="btn btn-pri" id="novoAp">Novo apontamento</button>';
+      S.registros = []; apagar(kRasc()); render();
+    }).catch(function (er) { toast(er.message, true); fechar("folhaEnc"); })
+      .then(function () { delete $("folhaEnc").dataset.travado; });
+  });
+
+  // ------------------------------------------------------------ administração
+  function telaAdmin(msg, erro) {
+    mostrar("vAdmin");
+    $("admConteudo").innerHTML = '<div class="carregando" style="min-height:30vh"><div><div class="giro"></div>Carregando…</div></div>';
+    run("admin", S.token).then(function (d) { S.adm = d; renderAdmin(msg, erro); })
+      .catch(function (e) { if (!e.sessao) $("admConteudo").innerHTML = '<div class="aviso erro">' + esc(e.message) + "</div>"; });
+  }
+  function aviso(msg, erro) { return msg ? '<div class="aviso ' + (erro ? "erro" : "ok") + '">' + esc(msg) + "</div>" : ""; }
+  function renderAdmin(msg, erro) {
+    var d = S.adm, c = d.config;
+    $("linkPlanilha").href = d.planilhaUrl; $("linkPasta").href = d.pastaUrl;
+    $("admMsg").innerHTML = aviso(msg, erro) + (c.config_revisada !== "1" ?
+      '<div class="aviso atencao">Revise os dados da transportadora e dos emissores em Configurações antes de enviar arquivos ao cliente. Eles vão no cabeçalho do TXT.</div>' : "");
+    $("admNumeros").innerHTML = [[d.stats.abertos, "NFs em apontamentos abertos"], [d.stats.hoje, "NFs encerradas hoje"], [d.stats.entregas, "entregas realizadas hoje"], [d.stats.motoristas, "motoristas ativos"]]
+      .map(function (x) { return '<div class="numero"><b>' + x[0] + "</b><span>" + x[1] + "</span></div>"; }).join("");
+    document.querySelectorAll("#abas a").forEach(function (a) { if (a.dataset.aba === S.aba) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    var h = "";
+    if (S.aba === "lotes") {
+      h = d.lotes.length ? '<div class="tabela-wrap"><table><thead><tr><th>Lote</th><th>Encerrado em</th><th>Motorista</th><th>NFs</th><th>Arquivo</th><th></th></tr></thead><tbody>' +
+        d.lotes.map(function (l) { return "<tr><td>" + l.id + "</td><td>" + esc(l.encerrado_em) + "</td><td>" + esc(l.nome) + "</td><td>" + l.qtd + "</td><td>" + esc(l.arquivo_txt) +
+          '</td><td style="white-space:nowrap"><button class="btn-txt" data-baixar="' + l.id + '">Baixar</button> <a href="' + esc(l.url) + '" target="_blank" rel="noopener">Abrir no Drive</a></td></tr>'; }).join("") + "</tbody></table></div>"
+        : '<div class="vazio-lista">Nenhum arquivo gerado ainda. Os TXT aparecem aqui quando um motorista encerra o apontamento.</div>';
+    } else if (S.aba === "abertos") {
+      h = d.abertos.length ? '<div class="tabela-wrap"><table><thead><tr><th>Motorista</th><th>NF</th><th>Ocorrência</th><th>Data/hora</th><th>Recebedor</th><th>Observação</th></tr></thead><tbody>' +
+        d.abertos.map(function (a) { return "<tr><td>" + esc(a.nome) + "</td><td>" + esc(nfCurta(a.numero_nf)) + (a.serie_nf ? "-" + esc(a.serie_nf) : "") + "</td><td>" + a.cod_ocorrencia + " – " + esc(a.descricao_ocorrencia) +
+          "</td><td>" + br(a.data_ocorrencia).slice(0, 5) + " " + esc(a.hora_ocorrencia) + "</td><td>" + esc(a.recebedor) + "</td><td>" + esc(a.observacao) + "</td></tr>"; }).join("") + "</tbody></table></div>"
+        : '<div class="vazio-lista">Nenhuma nota em aberto. Todos os apontamentos foram encerrados.</div>';
+    } else if (S.aba === "usuarios") {
+      h = '<form class="form" id="fNovoUs" style="margin-bottom:20px"><h3 style="font-size:16px;margin-bottom:12px">Novo usuário</h3><div class="grade-form">' +
+        '<div class="campo"><label for="nNome">Nome completo</label><input id="nNome" required></div>' +
+        '<div class="campo"><label for="nLogin">Usuário de acesso</label><input id="nLogin" autocapitalize="none" required></div>' +
+        '<div class="campo"><label for="nSenha">Senha inicial</label><input id="nSenha" required minlength="4"></div>' +
+        '<div class="campo"><label for="nPerfil">Perfil</label><select id="nPerfil"><option value="motorista">Motorista</option><option value="admin">Administrador</option></select></div>' +
+        '</div><button class="btn btn-pri">Criar usuário</button></form>' +
+        '<div class="tabela-wrap"><table><thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>NFs abertas</th><th>Redefinir senha</th><th></th></tr></thead><tbody>' +
+        d.usuarios.map(function (u) {
+          return "<tr><td>" + esc(u.nome) + "</td><td>" + esc(u.login) + '</td><td><span class="badge ' + (u.perfil === "admin" ? "admin" : "") + '">' + (u.perfil === "admin" ? "Administrador" : "Motorista") + "</span>" +
+            (u.ativo ? "" : ' <span class="badge inativo">Inativo</span>') + "</td><td>" + u.abertos + '</td><td><form class="inline-form" data-senha="' + u.id + '"><input placeholder="nova senha" aria-label="Nova senha para ' + esc(u.login) +
+            '" minlength="4" required><button class="btn btn-sec">Redefinir</button></form></td><td><button class="btn-txt ' + (u.ativo ? "btn-perigo" : "") + '" data-ativo="' + u.id + '">' + (u.ativo ? "Desativar" : "Reativar") + "</button></td></tr>";
+        }).join("") + "</tbody></table></div>";
+    } else {
+      var campo = function (id, rot, val, extra) { return '<div class="campo"><label for="c_' + id + '">' + rot + '</label><input id="c_' + id + '" name="' + id + '" value="' + esc(val) + '" ' + (extra || "") + "></div>"; };
+      h = '<form class="form" id="fConfig"><h3 style="font-size:16px;margin-bottom:4px">Cabeçalho do arquivo OCOREN</h3><p style="margin:0 0 14px;font-size:14px;color:var(--marinho-2)">Registros 000 e 541 do layout PROCEDA 5.0.</p><div class="grade-form">' +
+        campo("remetente_nome", 'Remetente do arquivo <span class="dica">(até 35)</span>', c.remetente_nome, 'maxlength="35" required') +
+        campo("destinatario_nome", 'Destinatário do arquivo <span class="dica">(até 35)</span>', c.destinatario_nome, 'maxlength="35" required') +
+        campo("transportadora_cnpj", "CNPJ da transportadora", c.transportadora_cnpj, 'inputmode="numeric" required') +
+        campo("transportadora_nome", 'Razão social da transportadora <span class="dica">(até 50)</span>', c.transportadora_nome, 'maxlength="50" required') +
+        '</div><h3 style="font-size:16px;margin:10px 0 12px">Notas fiscais e CT-e</h3><div class="campo"><label for="c_emitentes">Emissores das NFs <span class="dica">(um por linha: CNPJ;Nome. O primeiro é o padrão)</span></label><textarea id="c_emitentes" name="emitentes" rows="3">' + esc(c.emitentes) + "</textarea></div>" +
+        '<div class="grade-form">' + campo("serie_nf_padrao", "Série padrão da NF", c.serie_nf_padrao, 'maxlength="3"') +
+        campo("filial_cte", 'Filial emissora CT-e <span class="dica">(opcional)</span>', c.filial_cte, 'maxlength="10"') + campo("serie_cte", "Série CT-e padrão", c.serie_cte, 'maxlength="5"') + "</div>" +
+        campo("favoritas", 'Ocorrências em destaque para o motorista <span class="dica">(códigos separados por vírgula)</span>', c.favoritas) +
+        '<button class="btn btn-pri">Salvar configurações</button></form>';
+    }
+    $("admConteudo").innerHTML = h;
+  }
+  $("abas").addEventListener("click", function (e) { var a = e.target.closest("a"); if (!a) return; e.preventDefault(); S.aba = a.dataset.aba; $("admMsg").innerHTML = ""; renderAdmin(); });
+  function acaoAdm(promessa, btn) {
+    if (btn) ocupado(btn, true);
+    promessa.then(function (r) { telaAdmin(r.msg); }).catch(function (e) { if (btn) ocupado(btn, false); $("admMsg").innerHTML = aviso(e.message, true); window.scrollTo(0, 0); });
+  }
+  $("admConteudo").addEventListener("submit", function (e) {
+    e.preventDefault(); var f = e.target, btn = f.querySelector("button");
+    if (f.id === "fNovoUs") acaoAdm(run("adminCriarUsuario", S.token, { nome: $("nNome").value, login: $("nLogin").value, senha: $("nSenha").value, perfil: $("nPerfil").value }), btn);
+    else if (f.dataset.senha) acaoAdm(run("adminAcaoUsuario", S.token, f.dataset.senha, "senha", f.querySelector("input").value), btn);
+    else if (f.id === "fConfig") { var o = {}; f.querySelectorAll("[name]").forEach(function (i) { o[i.name] = i.value; }); acaoAdm(run("adminSalvarConfig", S.token, o), btn); }
+  });
+  $("admConteudo").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.ativo) acaoAdm(run("adminAcaoUsuario", S.token, b.dataset.ativo, "ativo"), b);
+    if (b.dataset.baixar) baixarLote(+b.dataset.baixar, b);
+  });
+
+  // ------------------------------------------------------------ início
+  S.token = ler("fi_token", null);
+  if (!S.token) mostrar("vLogin");
+  else run("iniciar", S.token).then(function (d) {
+    definirUsuario(d.usuario);
+    if (d.usuario.trocar_senha) return telaSenha(true);
+    S.dados = d; S.oc = {}; d.ocorrencias.forEach(function (o) { S.oc[o.codigo] = o.descricao; });
+    montarAp(d); mostrar("vAp"); enviarFila();
+  }).catch(function (e) { if (!e.sessao) sairLocal(e.rede ? "Sem conexão. Verifique a internet e tente de novo." : e.message); });
+})();
+</script>
+</body>
+</html>

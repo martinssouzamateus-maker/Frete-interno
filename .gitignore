@@ -1,0 +1,7 @@
+servidor-python/dados/*
+!servidor-python/dados/.manter
+servidor-python/config.ini
+.venv/
+__pycache__/
+*.pyc
+.DS_Store

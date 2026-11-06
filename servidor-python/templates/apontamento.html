@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block titulo %}Apontamento{% endblock %}
+{% block corpo %}
+<main class="pagina">
+  {% with msgs = get_flashed_messages() %}{% for m in msgs %}<div class="aviso ok">{{ m }}</div>{% endfor %}{% endwith %}
+
+  <div class="secao-titulo" style="margin-top:8px">
+    <h2 id="tituloForm">Nova ocorrência</h2>
+    <p class="status" id="status" aria-live="polite"><span class="ponto"></span><span id="statusTxt">Tudo salvo</span></p>
+  </div>
+
+  <form class="form" id="form" novalidate autocomplete="off">
+    <div class="linha-nf">
+      <div class="campo">
+        <label for="numero_nf">Número da NF</label>
+        <input id="numero_nf" class="nf" inputmode="numeric" pattern="[0-9]*" maxlength="9" placeholder="000000" required>
+      </div>
+      <div class="campo">
+        <label for="serie_nf">Série</label>
+        <input id="serie_nf" inputmode="numeric" maxlength="3" value="{{ serie_padrao }}">
+      </div>
+    </div>
+
+    {% if emitentes|length > 1 %}
+    <div class="campo">
+      <label for="cnpj_emissor">Emissor da NF</label>
+      <select id="cnpj_emissor">
+        {% for e in emitentes %}<option value="{{ e.cnpj }}">{{ e.nome }} – {{ e.cnpj }}</option>{% endfor %}
+      </select>
+    </div>
+    {% else %}
+    <input type="hidden" id="cnpj_emissor" value="{{ emitentes[0].cnpj if emitentes else '' }}">
+    {% endif %}
+
+    <div class="campo">
+      <span class="rotulo" id="rotOcorr">Ocorrência</span>
+      <button type="button" class="ocorr-btn" id="ocorrBtn" aria-labelledby="rotOcorr ocorrTxt">
+        <span class="cod cinza" id="ocorrCod">?</span>
+        <span id="ocorrTxt" class="vazio">Toque para escolher na lista</span>
+        <span class="seta" aria-hidden="true">▾</span>
+      </button>
+      <input type="hidden" id="cod_ocorrencia">
+      <div class="favoritas" id="favoritas" aria-label="Ocorrências mais usadas">
+        {% for f in favoritas %}
+        <button type="button" class="chip" data-cod="{{ f }}" aria-pressed="false"><b>{{ f }}</b><span>{{ ocorrencias|selectattr('codigo','equalto',f)|map(attribute='descricao')|first }}</span></button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="linha-2">
+      <div class="campo">
+        <label for="data_ocorrencia">Data</label>
+        <input id="data_ocorrencia" type="date" max="{{ hoje }}" required>
+      </div>
+      <div class="campo">
+        <label for="hora_ocorrencia">Horário</label>
+        <input id="hora_ocorrencia" type="time" required>
+      </div>
+    </div>
+    <div style="margin:-6px 0 14px"><button type="button" class="agora-btn" id="agoraBtn">Usar data e hora de agora</button></div>
+
+    <div class="campo" id="campoRecebedor">
+      <label for="recebedor">Recebido por <span class="dica">(nome de quem recebeu)</span></label>
+      <input id="recebedor" type="text" maxlength="60" autocapitalize="characters">
+    </div>
+
+    <div class="campo">
+      <label for="observacao">Observação <span class="dica">(opcional)</span></label>
+      <textarea id="observacao" maxlength="120" rows="2"></textarea>
+    </div>
+
+    <details class="mais" id="mais">
+      <summary>Romaneio e CT-e</summary>
+      <div class="campo" style="margin-top:8px">
+        <label for="romaneio">Romaneio / viagem</label>
+        <input id="romaneio" type="text" maxlength="20">
+      </div>
+      <div class="linha-2">
+        <div class="campo"><label for="filial_cte">Filial CT-e</label><input id="filial_cte" type="text" maxlength="10" value="{{ filial_cte }}"></div>
+        <div class="campo"><label for="serie_cte">Série CT-e</label><input id="serie_cte" inputmode="numeric" maxlength="5" value="{{ serie_cte }}"></div>
+      </div>
+      <div class="campo"><label for="numero_cte">Número CT-e</label><input id="numero_cte" inputmode="numeric" maxlength="12"></div>
+    </details>
+
+    <div class="aviso erro oculto" id="erroForm" role="alert"></div>
+    <div class="acoes-form">
+      <button type="button" class="btn btn-sec oculto" id="cancelarBtn">Cancelar</button>
+      <button type="submit" class="btn btn-pri" id="salvarBtn">Adicionar NF</button>
+    </div>
+  </form>
+
+  <div class="secao-titulo">
+    <h2>Notas deste apontamento</h2>
+    <span class="aux" id="qtd">0</span>
+  </div>
+  <ul class="lista" id="lista"></ul>
+  <div class="vazio-lista" id="vazio">Nenhuma nota ainda. Preencha a NF acima e toque em <b>Adicionar NF</b>; cada nota é salva na hora.</div>
+
+  {% if lotes %}
+  <div class="secao-titulo"><h2>Meus envios</h2><span class="aux">últimos {{ lotes|length }}</span></div>
+  <ul class="envios">
+    {% for l in lotes %}
+    <li>
+      <div><div class="arq">{{ l.arquivo_txt }}</div>
+        <div class="quando">{{ l.encerrado_em[8:10] }}/{{ l.encerrado_em[5:7] }}/{{ l.encerrado_em[:4] }} às {{ l.encerrado_em[11:16] }} · {{ l.qtd }} NF{{ 's' if l.qtd != 1 }}</div></div>
+      <a class="btn-txt" href="{{ url_for('baixar_txt', lote_id=l.id) }}">Baixar</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</main>
+
+<div class="barra">
+  <div class="barra-in">
+    <button class="btn btn-marinho bloco" id="encerrarBtn" disabled>Encerrar e gerar arquivo</button>
+  </div>
+</div>
+
+<!-- lista de ocorrências -->
+<div class="fundo oculto" id="folhaOcorr" role="dialog" aria-modal="true" aria-labelledby="tOcorr">
+  <div class="folha">
+    <div class="folha-cab"><h2 id="tOcorr">Escolha a ocorrência</h2><button class="fechar" data-fechar aria-label="Fechar">×</button></div>
+    <div class="folha-busca"><input id="busca" type="text" placeholder="Buscar por código ou descrição" aria-label="Buscar ocorrência"></div>
+    <div class="folha-corpo" id="listaOcorr" role="listbox" aria-labelledby="tOcorr"></div>
+  </div>
+</div>
+
+<!-- confirmar encerramento -->
+<div class="fundo oculto" id="folhaEnc" role="dialog" aria-modal="true" aria-labelledby="tEnc">
+  <div class="folha">
+    <div class="folha-cab"><h2 id="tEnc">Encerrar apontamento?</h2><button class="fechar" data-fechar aria-label="Fechar">×</button></div>
+    <div class="folha-corpo" id="encCorpo" style="padding-top:14px"></div>
+    <div class="folha-rodape" id="encRodape">
+      <button class="btn btn-sec" data-fechar>Voltar</button>
+      <button class="btn btn-pri" id="confirmaEnc">Encerrar e gerar arquivo</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script id="dados" type="application/json">{{ {'ocorrencias': ocorrencias, 'favoritas': favoritas, 'usuario': usuario['id']}|tojson }}</script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+{% endblock %}

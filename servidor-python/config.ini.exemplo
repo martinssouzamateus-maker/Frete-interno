@@ -1,0 +1,9 @@
+; Copie este arquivo para "config.ini" para mudar portas e pastas.
+; Caminhos relativos sao a partir da pasta do sistema. Pode usar pasta de rede, ex.: \\servidor\edi\ocoren
+[servidor]
+porta = 8080
+
+[caminhos]
+banco = dados/frete_interno.db
+pasta_txt = dados/txt_ocoren
+planilha = dados/apontamentos_ocoren.xlsx

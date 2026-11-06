@@ -1,0 +1,478 @@
+[
+ {
+  "codigo": "000",
+  "descricao": "Processo de Transporte já Iniciado"
+ },
+ {
+  "codigo": "001",
+  "descricao": "Entrega Realizada Normalmente"
+ },
+ {
+  "codigo": "002",
+  "descricao": "Entrega Fora da Data Programada"
+ },
+ {
+  "codigo": "003",
+  "descricao": "Recusa por Falta de Pedido de Compra"
+ },
+ {
+  "codigo": "004",
+  "descricao": "Recusa por Pedido de Compra Cancelado"
+ },
+ {
+  "codigo": "005",
+  "descricao": "Falta de Espaço Físico no Depósito do Cliente Destino"
+ },
+ {
+  "codigo": "006",
+  "descricao": "Endereço do Cliente Destino não Localizado"
+ },
+ {
+  "codigo": "007",
+  "descricao": "Devolução não Autorizada pelo Cliente"
+ },
+ {
+  "codigo": "008",
+  "descricao": "Preço Mercadoria em Desacordo com o Pedido Compra"
+ },
+ {
+  "codigo": "009",
+  "descricao": "Mercadoria em Desacordo com o Pedido Compra"
+ },
+ {
+  "codigo": "010",
+  "descricao": "Cliente Destino somente Recebe Mercadoria com Frete Pago"
+ },
+ {
+  "codigo": "011",
+  "descricao": "Recusa por Deficiência Embalagem Mercadoria"
+ },
+ {
+  "codigo": "012",
+  "descricao": "Redespacho não Indicado"
+ },
+ {
+  "codigo": "013",
+  "descricao": "Transportadora não Atende a Cidade do Cliente Destino"
+ },
+ {
+  "codigo": "014",
+  "descricao": "Mercadoria Sinistrada"
+ },
+ {
+  "codigo": "015",
+  "descricao": "Embalagem Sinistrada"
+ },
+ {
+  "codigo": "016",
+  "descricao": "Pedido de Compras em Duplicidade"
+ },
+ {
+  "codigo": "017",
+  "descricao": "Mercadoria fora da Embalagem de Atacadista"
+ },
+ {
+  "codigo": "018",
+  "descricao": "Mercadorias Trocadas"
+ },
+ {
+  "codigo": "019",
+  "descricao": "Reentrega Solicitada pelo Cliente"
+ },
+ {
+  "codigo": "020",
+  "descricao": "Entrega Prejudicada por Horário/Falta de Tempo Hábil"
+ },
+ {
+  "codigo": "021",
+  "descricao": "Estabelecimento Fechado"
+ },
+ {
+  "codigo": "022",
+  "descricao": "Reentrega sem Cobrança do Cliente"
+ },
+ {
+  "codigo": "023",
+  "descricao": "Extravio de Mercadoria em Trânsito"
+ },
+ {
+  "codigo": "024",
+  "descricao": "Mercadoria Reentregue ao Cliente Destino"
+ },
+ {
+  "codigo": "025",
+  "descricao": "Mercadoria Devolvida ao Cliente de Origem"
+ },
+ {
+  "codigo": "026",
+  "descricao": "Nota Fiscal Retida pela Fiscalização"
+ },
+ {
+  "codigo": "027",
+  "descricao": "Roubo de Carga"
+ },
+ {
+  "codigo": "028",
+  "descricao": "Mercadoria Retida até Segunda Ordem"
+ },
+ {
+  "codigo": "029",
+  "descricao": "Cliente Retira Mercadoria na Transportadora"
+ },
+ {
+  "codigo": "030",
+  "descricao": "Problema com a Documentação (Nota Fiscal e/ou CTRC)"
+ },
+ {
+  "codigo": "031",
+  "descricao": "Entrega com Indenização Efetuada"
+ },
+ {
+  "codigo": "032",
+  "descricao": "Falta com Solicitação de Reposição"
+ },
+ {
+  "codigo": "033",
+  "descricao": "Falta com Busca/Reconferência"
+ },
+ {
+  "codigo": "034",
+  "descricao": "Cliente Fechado para Balanço"
+ },
+ {
+  "codigo": "035",
+  "descricao": "Quantidade de Produto em Desacordo (Nota Fiscal e/ou Pedido)"
+ },
+ {
+  "codigo": "036",
+  "descricao": "Extravio de documentos pela Cia. Aérea - Cód. Aéreo"
+ },
+ {
+  "codigo": "037",
+  "descricao": "Extravio de carga pela Cia. Aérea - Cód. Aéreo"
+ },
+ {
+  "codigo": "038",
+  "descricao": "Avaria de carga pela cia. Aérea"
+ },
+ {
+  "codigo": "039",
+  "descricao": "Corte de carga na pista - Cód. Aéreo"
+ },
+ {
+  "codigo": "040",
+  "descricao": "Aeroporto fechado na origem - Cód. Aéreo"
+ },
+ {
+  "codigo": "041",
+  "descricao": "Pedido de Compra Incompleto"
+ },
+ {
+  "codigo": "042",
+  "descricao": "Nota Fiscal com Produtos de Setores Diferentes"
+ },
+ {
+  "codigo": "043",
+  "descricao": "Feriado Local/Nacional"
+ },
+ {
+  "codigo": "044",
+  "descricao": "Excesso de Veículos"
+ },
+ {
+  "codigo": "045",
+  "descricao": "Cliente Destino Encerrou Atividades"
+ },
+ {
+  "codigo": "046",
+  "descricao": "Responsável de Recebimento Ausente"
+ },
+ {
+  "codigo": "047",
+  "descricao": "Cliente Destino em Greve"
+ },
+ {
+  "codigo": "048",
+  "descricao": "Aeroporto fechado no destino - Cód. Aéreo"
+ },
+ {
+  "codigo": "049",
+  "descricao": "Vôo cancelado - Cód. Transp. Aéreo"
+ },
+ {
+  "codigo": "050",
+  "descricao": "Greve nacional (Greve Geral)"
+ },
+ {
+  "codigo": "051",
+  "descricao": "Mercadoria Vencida (Data de Validade Expirada)"
+ },
+ {
+  "codigo": "052",
+  "descricao": "Mercadoria Redespachada (Entregue para Redespacho)"
+ },
+ {
+  "codigo": "053",
+  "descricao": "Mercadoria não foi Embarcada, Permanecendo na Origem"
+ },
+ {
+  "codigo": "054",
+  "descricao": "Mercadoria Embarcada sem CTRC ou CTRC não Embarcado"
+ },
+ {
+  "codigo": "055",
+  "descricao": "Endereço Transp. de Redespacho não localizado/não informado"
+ },
+ {
+  "codigo": "056",
+  "descricao": "Cliente não Aceita Mercadoria com Pagamento de Reembolso"
+ },
+ {
+  "codigo": "057",
+  "descricao": "Transp. não atende a cidade da transportadora de redespacho"
+ },
+ {
+  "codigo": "058",
+  "descricao": "Quebra do Veiculo de Entrega"
+ },
+ {
+  "codigo": "059",
+  "descricao": "Cliente sem Verba para Pagar o Frete"
+ },
+ {
+  "codigo": "060",
+  "descricao": "Endereço de Entrega Errado"
+ },
+ {
+  "codigo": "061",
+  "descricao": "Cliente sem Verba para Reembolso"
+ },
+ {
+  "codigo": "062",
+  "descricao": "Recusa da Carga por Valor de Frete Errado"
+ },
+ {
+  "codigo": "063",
+  "descricao": "Identificação do Cliente não Informada/Enviada/Insuficiente"
+ },
+ {
+  "codigo": "064",
+  "descricao": "Cliente não Identificado/Cadastrado"
+ },
+ {
+  "codigo": "065",
+  "descricao": "Entrar em Contato com o Comprador"
+ },
+ {
+  "codigo": "066",
+  "descricao": "Troca não Disponível"
+ },
+ {
+  "codigo": "067",
+  "descricao": "Fins Estatísticos"
+ },
+ {
+  "codigo": "068",
+  "descricao": "Data de Entrega Diferente do Pedido"
+ },
+ {
+  "codigo": "069",
+  "descricao": "Substituição Tributária"
+ },
+ {
+  "codigo": "070",
+  "descricao": "Sistema Fora do Ar"
+ },
+ {
+  "codigo": "071",
+  "descricao": "Cliente Destino não Recebe Pedido Parcial"
+ },
+ {
+  "codigo": "072",
+  "descricao": "Cliente Destino só Recebe Pedido Parcial"
+ },
+ {
+  "codigo": "073",
+  "descricao": "Redespacho somente com Frete Pago"
+ },
+ {
+  "codigo": "074",
+  "descricao": "Funcionário não autorizado a Receber Mercadorias"
+ },
+ {
+  "codigo": "075",
+  "descricao": "Mercadoria Embarcada para Rota Indevida"
+ },
+ {
+  "codigo": "076",
+  "descricao": "Estrada/Entrada de Acesso Interditada"
+ },
+ {
+  "codigo": "077",
+  "descricao": "Cliente Destino Mudou de Endereço"
+ },
+ {
+  "codigo": "078",
+  "descricao": "Avaria Total"
+ },
+ {
+  "codigo": "079",
+  "descricao": "Avaria Parcial"
+ },
+ {
+  "codigo": "080",
+  "descricao": "Extravio Total"
+ },
+ {
+  "codigo": "081",
+  "descricao": "Extravio Parcial"
+ },
+ {
+  "codigo": "082",
+  "descricao": "Sobra de Mercadoria sem Nota Fiscal"
+ },
+ {
+  "codigo": "083",
+  "descricao": "Mercadoria em poder da SUFRAMA para Internação"
+ },
+ {
+  "codigo": "084",
+  "descricao": "Mercadoria Retirada para Conferência"
+ },
+ {
+  "codigo": "085",
+  "descricao": "Apreensão Fiscal da Mercadoria"
+ },
+ {
+  "codigo": "086",
+  "descricao": "Excesso de Carga/Peso"
+ },
+ {
+  "codigo": "087",
+  "descricao": "Férias Coletivas"
+ },
+ {
+  "codigo": "088",
+  "descricao": "Recusado, aguardando negociação"
+ },
+ {
+  "codigo": "089",
+  "descricao": "Aguardando refaturamento das mercadorias"
+ },
+ {
+  "codigo": "090",
+  "descricao": "Recusado pelo Redespachante"
+ },
+ {
+  "codigo": "091",
+  "descricao": "Entrega Programada"
+ },
+ {
+  "codigo": "092",
+  "descricao": "Problemas Fiscais"
+ },
+ {
+  "codigo": "093",
+  "descricao": "Aguardando carta de correção"
+ },
+ {
+  "codigo": "094",
+  "descricao": "Recusa por divergência nas condições de pagamento"
+ },
+ {
+  "codigo": "095",
+  "descricao": "Carga aguardando vôo conexão - Cód. Transp. Aéreo"
+ },
+ {
+  "codigo": "096",
+  "descricao": "Carga sem embalagem própria para transp. Aéreo - Cód. Aéreo"
+ },
+ {
+  "codigo": "097",
+  "descricao": "Carga com dimensão superior ao porão da aeronave - Cód. Aéreo"
+ },
+ {
+  "codigo": "098",
+  "descricao": "Chegada na cidade ou filial de destino"
+ },
+ {
+  "codigo": "099",
+  "descricao": "Outros tipos de ocorrências não especificados acima"
+ },
+ {
+  "codigo": "100",
+  "descricao": "Devolução por não cumprimento do agendamento"
+ },
+ {
+  "codigo": "101",
+  "descricao": "Devolução/não entrega a pedido do embarcador"
+ },
+ {
+  "codigo": "102",
+  "descricao": "Devolução/não entrega a pedido do destinatário"
+ },
+ {
+  "codigo": "103",
+  "descricao": "Devolução/não entrega a pedido transportadora de redespacho"
+ },
+ {
+  "codigo": "104",
+  "descricao": "Entrega efetuada na Transportadora de Redespacho"
+ },
+ {
+  "codigo": "105",
+  "descricao": "Entrega efetuada no cliente pela Transportadora de Redespacho"
+ },
+ {
+  "codigo": "201",
+  "descricao": "Data da retirada em Manaus"
+ },
+ {
+  "codigo": "202",
+  "descricao": "Placa da carreta responsável pelo transporte"
+ },
+ {
+  "codigo": "203",
+  "descricao": "Nome da balsa"
+ },
+ {
+  "codigo": "204",
+  "descricao": "Nome do empurrador"
+ },
+ {
+  "codigo": "205",
+  "descricao": "Número da frota"
+ },
+ {
+  "codigo": "206",
+  "descricao": "Data de chegada em Belém"
+ },
+ {
+  "codigo": "207",
+  "descricao": "Data de saída de Belém"
+ },
+ {
+  "codigo": "208",
+  "descricao": "Data de chegada na Transportadora"
+ },
+ {
+  "codigo": "209",
+  "descricao": "Data de saída da Transportadora"
+ },
+ {
+  "codigo": "210",
+  "descricao": "Data de chegada no Porto"
+ },
+ {
+  "codigo": "211",
+  "descricao": "Data de saída do Porto"
+ },
+ {
+  "codigo": "212",
+  "descricao": "Data de chegada na segunda Transportadora"
+ },
+ {
+  "codigo": "213",
+  "descricao": "Data de saída da segunda Transportadora (redespacho)"
+ }
+]

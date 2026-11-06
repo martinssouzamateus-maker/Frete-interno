@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+/*CSS*/
+.carregando { display: grid; place-items: center; min-height: 60vh; color: var(--marinho-2); }
+.giro { width: 36px; height: 36px; border-radius: 50%; border: 4px solid var(--nevoa); border-top-color: var(--magenta); animation: giro 1s linear infinite; margin: 0 auto 12px; }
+@keyframes giro { to { transform: rotate(360deg); } }
+.btn[aria-busy=true] { opacity: .7; pointer-events: none; }
+</style>
+</head>
+<body>
+
+<!-- ===================================================== topo -->
+<header class="topo oculto" id="topo">
+  <div class="topo-in">
+    <img src="data:image/png;base64,/*LOGO*/" alt="Calibre">
+    <span class="app">Frete Interno</span>
+    <span class="esp"></span>
+    <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+      <span class="avatar" aria-hidden="true" id="avatar"></span><span class="nome" id="nomeTopo"></span>
+    </button>
+    <nav class="menu oculto" id="menu">
+      <a href="#" data-ir="ap">Apontamento</a>
+      <a href="#" data-ir="admin" id="menuAdmin" class="oculto">Administração</a>
+      <a href="#" data-ir="senha">Trocar senha</a>
+      <a href="#" data-ir="sair">Sair</a>
+    </nav>
+  </div>
+</header>
+
+<div class="carregando" id="vCarregando"><div><div class="giro"></div>Carregando…</div></div>
+
+<!-- ===================================================== login -->
+<main class="login-pg oculto" id="vLogin">
+  <img class="grafismo" src="data:image/png;base64,/*GRAF*/" alt="">
+  <div class="login-box">
+    <img class="logo" src="data:image/png;base64,/*LOGO*/" alt="Calibre">
+    <h1>Frete Interno</h1>
+    <p class="sub">Apontamento de entregas e ocorrências das notas fiscais.</p>
+    <div class="aviso erro oculto" id="loginErro" role="alert"></div>
+    <form id="fLogin" autocomplete="on">
+      <div class="campo"><label for="login">Usuário</label>
+        <input id="login" name="login" type="text" autocapitalize="none" autocorrect="off" autocomplete="username" required></div>
+      <div class="campo"><label for="senha">Senha</label>
+        <input id="senha" name="senha" type="password" autocomplete="current-password" required></div>
+      <button class="btn btn-pri bloco" type="submit" id="loginBtn">Entrar</button>
+    </form>
+  </div>
+  <div class="login-rodape">Esqueceu a senha? Fale com o administrador do sistema.</div>
+</main>
+
+<!-- ===================================================== trocar senha -->
+<main class="pagina oculto" id="vSenha">
+  <div class="secao-titulo"><h2>Trocar senha</h2></div>
+  <div class="aviso atencao oculto" id="senhaObrig">Antes de continuar, crie uma senha pessoal. Ela substitui a senha inicial que você recebeu.</div>
+  <div class="aviso erro oculto" id="senhaErro" role="alert"></div>
+  <form class="form" id="fSenha">
+    <div class="campo"><label for="sAtual">Senha atual</label><input id="sAtual" type="password" autocomplete="current-password" required></div>
+    <div class="campo"><label for="sNova">Nova senha <span class="dica">(mínimo 6 caracteres)</span></label><input id="sNova" type="password" autocomplete="new-password" minlength="6" required></div>
+    <div class="campo"><label for="sConf">Repita a nova senha</label><input id="sConf" type="password" autocomplete="new-password" required></div>
+    <button class="btn btn-pri bloco" id="senhaBtn">Salvar nova senha</button>
+  </form>
+</main>
+
+<!-- ===================================================== apontamento -->
+<main class="pagina oculto" id="vAp">
+  <div class="secao-titulo" style="margin-top:8px">
+    <h2 id="tituloForm">Nova ocorrência</h2>
+    <p class="status" id="status" aria-live="polite"><span class="ponto"></span><span id="statusTxt">Tudo salvo</span></p>
+  </div>
+
+  <form class="form" id="form" novalidate autocomplete="off">
+    <div class="linha-nf">
+      <div class="campo"><label for="numero_nf">Número da NF</label>
+        <input id="numero_nf" class="nf" inputmode="numeric" pattern="[0-9]*" maxlength="9" placeholder="000000" required></div>
+      <div class="campo"><label for="serie_nf">Série</label><input id="serie_nf" inputmode="numeric" maxlength="3"></div>
+    </div>
+    <div class="campo oculto" id="campoEmissor"><label for="cnpj_emissor">Emissor da NF</label><select id="cnpj_emissor"></select></div>
+
+    <div class="campo">
+      <span class="rotulo" id="rotOcorr">Ocorrência</span>
+      <button type="button" class="ocorr-btn" id="ocorrBtn" aria-labelledby="rotOcorr ocorrTxt">
+        <span class="cod cinza" id="ocorrCod">?</span>
+        <span id="ocorrTxt" class="vazio">Toque para escolher na lista</span>
+        <span class="seta" aria-hidden="true">▾</span>
+      </button>
+      <input type="hidden" id="cod_ocorrencia">
+      <div class="favoritas" id="favoritas" aria-label="Ocorrências mais usadas"></div>
+    </div>
+
+    <div class="linha-2">
+      <div class="campo"><label for="data_ocorrencia">Data</label><input id="data_ocorrencia" type="date" required></div>
+      <div class="campo"><label for="hora_ocorrencia">Horário</label><input id="hora_ocorrencia" type="time" required></div>
+    </div>
+    <div style="margin:-6px 0 14px"><button type="button" class="agora-btn" id="agoraBtn">Usar data e hora de agora</button></div>
+
+    <div class="campo" id="campoRecebedor"><label for="recebedor">Recebido por <span class="dica">(nome de quem recebeu)</span></label>
+      <input id="recebedor" type="text" maxlength="60" autocapitalize="characters"></div>
+    <div class="campo"><label for="observacao">Observação <span class="dica">(opcional)</span></label>
+      <textarea id="observacao" maxlength="120" rows="2"></textarea></div>
+
+    <details class="mais">
+      <summary>Romaneio e CT-e</summary>
+      <div class="campo" style="margin-top:8px"><label for="romaneio">Romaneio / viagem</label><input id="romaneio" type="text" maxlength="20"></div>
+      <div class="linha-2">
+        <div class="campo"><label for="filial_cte">Filial CT-e</label><input id="filial_cte" type="text" maxlength="10"></div>
+        <div class="campo"><label for="serie_cte">Série CT-e</label><input id="serie_cte" inputmode="numeric" maxlength="5"></div>
+      </div>
+      <div class="campo"><label for="numero_cte">Número CT-e</label><input id="numero_cte" inputmode="numeric" maxlength="12"></div>
+    </details>
+
+    <div class="aviso erro oculto" id="erroForm" role="alert"></div>
+    <div class="acoes-form">
+      <button type="button" class="btn btn-sec oculto" id="cancelarBtn">Cancelar</button>
+      <button type="submit" class="btn btn-pri" id="salvarBtn">Adicionar NF</button>
+    </div>
+  </form>
+
+  <div class="secao-titulo"><h2>Notas deste apontamento</h2><span class="aux" id="qtd">0</span></div>
+  <ul class="lista" id="lista"></ul>
+  <div class="vazio-lista" id="vazio">Nenhuma nota ainda. Preencha a NF acima e toque em <b>Adicionar NF</b>; cada nota é salva na hora.</div>
+
+  <div id="blocoEnvios" class="oculto">
+    <div class="secao-titulo"><h2>Meus envios</h2><span class="aux" id="qtdEnvios"></span></div>
+    <ul class="envios" id="envios"></ul>
+  </div>
+
+  <div class="barra"><div class="barra-in">
+    <button class="btn btn-marinho bloco" id="encerrarBtn" disabled>Encerrar e gerar arquivo</button>
+  </div></div>
+</main>
+
+<!-- ===================================================== admin -->
+<main class="pagina larga oculto" id="vAdmin">
+  <div class="secao-titulo" style="margin-top:8px"><h2>Administração</h2>
+    <span class="aux"><a href="#" id="linkPlanilha" target="_blank" rel="noopener">Abrir planilha</a> · <a href="#" id="linkPasta" target="_blank" rel="noopener">Pasta dos TXT</a></span></div>
+  <div id="admMsg"></div>
+  <div class="numeros" id="admNumeros"></div>
+  <nav class="abas" id="abas">
+    <a href="#" data-aba="lotes">Arquivos gerados</a>
+    <a href="#" data-aba="abertos">Em aberto</a>
+    <a href="#" data-aba="usuarios">Usuários</a>
+    <a href="#" data-aba="config">Configurações</a>
+  </nav>
+  <div id="admConteudo"></div>
+</main>
+
+<!-- ===================================================== folhas -->
+<div class="fundo oculto" id="folhaOcorr" role="dialog" aria-modal="true" aria-labelledby="tOcorr">
+  <div class="folha">
+    <div class="folha-cab"><h2 id="tOcorr">Escolha a ocorrência</h2><button class="fechar" data-fechar aria-label="Fechar">×</button></div>
+    <div class="folha-busca"><input id="busca" type="text" placeholder="Buscar por código ou descrição" aria-label="Buscar ocorrência"></div>
+    <div class="folha-corpo" id="listaOcorr" role="listbox" aria-labelledby="tOcorr"></div>
+  </div>
+</div>
+<div class="fundo oculto" id="folhaEnc" role="dialog" aria-modal="true" aria-labelledby="tEnc">
+  <div class="folha">
+    <div class="folha-cab"><h2 id="tEnc">Encerrar apontamento?</h2><button class="fechar" data-fechar aria-label="Fechar">×</button></div>
+    <div class="folha-corpo" id="encCorpo" style="padding-top:14px"></div>
+    <div class="folha-rodape" id="encRodape"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var ENTREGUE = ["001", "002", "024", "031", "104", "105"];
+  var CAMPOS = ["numero_nf", "serie_nf", "cnpj_emissor", "cod_ocorrencia", "data_ocorrencia", "hora_ocorrencia",
+    "recebedor", "observacao", "romaneio", "filial_cte", "serie_cte", "numero_cte"];
+  var S = { token: null, usuario: null, dados: null, registros: [], editandoId: null, enviando: false, oc: {}, aba: "lotes" };
+
+  // ------------------------------------------------------------ armazenamento local (com reserva em memória)
+  var mem = {};
+  function ler(k, p) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : p; } catch (e) { return k in mem ? mem[k] : p; } }
+  function gravar(k, v) { mem[k] = v; try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+  function apagar(k) { delete mem[k]; try { localStorage.removeItem(k); } catch (e) { } }
+  function kFila() { return "fi_fila_" + S.usuario.id; }
+  function kRasc() { return "fi_rascunho_" + S.usuario.id; }
+  function fila() { return ler(kFila(), []); }
+
+  // ------------------------------------------------------------ chamadas ao servidor
+  function run(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (res, rej) {
+      google.script.run
+        .withSuccessHandler(function (r) {
+          r = r || {};
+          if (r.sessao === false) { sairLocal("Sua sessão expirou. Entre novamente."); var e0 = new Error(r.erro); e0.sessao = true; return rej(e0); }
+          if (r.erro) { var e = new Error(r.erro); e.servidor = true; return rej(e); }
+          res(r);
+        })
+        .withFailureHandler(function (err) { var e = new Error("Sem conexão com o servidor."); e.rede = true; e.det = err; rej(e); })
+        [fn].apply(null, args);
+    });
+  }
+
+  // ------------------------------------------------------------ utilitários
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+  function agoraData() { var d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function agoraHora() { var d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); }
+  function br(iso) { return iso ? iso.slice(8, 10) + "/" + iso.slice(5, 7) + "/" + iso.slice(0, 4) : ""; }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function nfCurta(n) { return String(n || "").replace(/^0+(?=\d)/, ""); }
+  var tT;
+  function toast(m, erro) { var t = $("toast"); t.textContent = m; t.className = "toast vis" + (erro ? " erro" : ""); clearTimeout(tT); tT = setTimeout(function () { t.className = "toast"; }, 3200); }
+  function status(tipo, txt) { $("status").className = "status " + (tipo || ""); $("statusTxt").textContent = txt; }
+  function ocupado(btn, sim, txt) { btn.setAttribute("aria-busy", sim ? "true" : "false"); if (txt) btn.textContent = txt; }
+  function baixar(nome, conteudo) {
+    var blob = new Blob([conteudo], { type: "text/plain" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = nome;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  function baixarLote(id, btn) {
+    if (btn) ocupado(btn, true);
+    run("baixarTxt", S.token, id).then(function (r) { baixar(r.nome, r.conteudo); })
+      .catch(function (e) { toast(e.message, true); }).then(function () { if (btn) ocupado(btn, false); });
+  }
+
+  // ------------------------------------------------------------ navegação
+  var VIEWS = ["vCarregando", "vLogin", "vSenha", "vAp", "vAdmin"];
+  function mostrar(v) {
+    VIEWS.forEach(function (x) { $(x).classList.toggle("oculto", x !== v); });
+    $("topo").classList.toggle("oculto", v === "vLogin" || v === "vCarregando");
+    window.scrollTo(0, 0);
+  }
+  function ir(dest) {
+    $("menu").classList.add("oculto");
+    if (dest === "sair") { run("sair", S.token).catch(function () { }); return sairLocal(); }
+    if (dest === "senha") return telaSenha(false);
+    if (dest === "admin") return telaAdmin();
+    return telaAp();
+  }
+  document.querySelectorAll("[data-ir]").forEach(function (a) { a.addEventListener("click", function (e) { e.preventDefault(); ir(a.dataset.ir); }); });
+  $("menuBtn").addEventListener("click", function (e) { e.stopPropagation(); var o = $("menu").classList.toggle("oculto"); this.setAttribute("aria-expanded", !o); });
+  document.addEventListener("click", function () { $("menu").classList.add("oculto"); });
+
+  function definirUsuario(u) {
+    S.usuario = u;
+    $("avatar").textContent = (u.nome || "?").slice(0, 1).toUpperCase();
+    $("nomeTopo").textContent = (u.nome || "").split(" ")[0];
+    $("menuAdmin").classList.toggle("oculto", u.perfil !== "admin");
+  }
+  function sairLocal(msg) {
+    apagar("fi_token"); S.token = null; S.usuario = null;
+    $("senha").value = "";
+    $("loginErro").textContent = msg || ""; $("loginErro").classList.toggle("oculto", !msg);
+    mostrar("vLogin");
+  }
+
+  // ------------------------------------------------------------ login
+  $("fLogin").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var b = $("loginBtn"); ocupado(b, true, "Entrando…");
+    run("login", $("login").value, $("senha").value).then(function (r) {
+      S.token = r.token; gravar("fi_token", r.token); definirUsuario(r.usuario);
+      $("loginErro").classList.add("oculto"); $("senha").value = "";
+      if (r.usuario.trocar_senha) telaSenha(true); else telaAp();
+    }).catch(function (er) {
+      $("loginErro").textContent = er.rede ? "Sem conexão. Verifique a internet e tente de novo." : er.message;
+      $("loginErro").classList.remove("oculto");
+    }).then(function () { ocupado(b, false, "Entrar"); });
+  });
+
+  // ------------------------------------------------------------ trocar senha
+  function telaSenha(obrig) {
+    ["sAtual", "sNova", "sConf"].forEach(function (i) { $(i).value = ""; });
+    $("senhaObrig").classList.toggle("oculto", !obrig); $("senhaErro").classList.add("oculto");
+    mostrar("vSenha");
+  }
+  $("fSenha").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var b = $("senhaBtn"); ocupado(b, true);
+    run("trocarSenha", S.token, $("sAtual").value, $("sNova").value, $("sConf").value).then(function (r) {
+      definirUsuario(r.usuario); toast("Senha alterada"); telaAp();
+    }).catch(function (er) { $("senhaErro").textContent = er.message; $("senhaErro").classList.remove("oculto"); })
+      .then(function () { ocupado(b, false); });
+  });
+
+  // ------------------------------------------------------------ tela de apontamento
+  function telaAp() {
+    if (S.usuario && S.usuario.trocar_senha) return telaSenha(true);
+    mostrar("vCarregando");
+    run("iniciar", S.token).then(function (d) {
+      S.dados = d; S.oc = {}; d.ocorrencias.forEach(function (o) { S.oc[o.codigo] = o.descricao; });
+      definirUsuario(d.usuario);
+      if (d.usuario.trocar_senha) return telaSenha(true);
+      montarAp(d); mostrar("vAp"); enviarFila();
+    }).catch(function (e) {
+      if (e.sessao) return;
+      mostrar("vAp"); status("offline", "Sem conexão"); if (S.dados) render();
+    });
+  }
+
+  function montarAp(d) {
+    $("serie_nf").defaultValue = d.serie_padrao; $("filial_cte").defaultValue = d.filial_cte; $("serie_cte").defaultValue = d.serie_cte;
+    $("data_ocorrencia").max = d.hoje;
+    var sel = $("cnpj_emissor");
+    sel.innerHTML = d.emitentes.map(function (e) { return '<option value="' + e.cnpj + '">' + esc(e.nome) + " – " + e.cnpj + "</option>"; }).join("");
+    $("campoEmissor").classList.toggle("oculto", d.emitentes.length < 2);
+    $("favoritas").innerHTML = d.favoritas.map(function (c) {
+      return '<button type="button" class="chip" data-cod="' + c + '" aria-pressed="false"><b>' + c + "</b><span>" + esc(S.oc[c]) + "</span></button>";
+    }).join("");
+    S.registros = d.registros;
+    var r = ler(kRasc(), null);
+    $("form").reset();
+    if (r) preencher(r); else escolher("", true);
+    if (!$("data_ocorrencia").value) $("data_ocorrencia").value = agoraData();
+    if (!$("hora_ocorrencia").value) $("hora_ocorrencia").value = agoraHora();
+    if (S.editandoId) sairEdicao();
+    render();
+    var env = d.lotes || [];
+    $("blocoEnvios").classList.toggle("oculto", !env.length);
+    $("qtdEnvios").textContent = "últimos " + env.length;
+    $("envios").innerHTML = env.map(function (l) {
+      return '<li><div><div class="arq">' + esc(l.arquivo_txt) + '</div><div class="quando">' + esc(l.encerrado_em) + " · " + l.qtd + " NF" + (l.qtd !== 1 ? "s" : "") +
+        '</div></div><button class="btn-txt" data-baixar="' + l.id + '">Baixar</button></li>';
+    }).join("");
+  }
+  $("envios").addEventListener("click", function (e) { var b = e.target.closest("[data-baixar]"); if (b) baixarLote(+b.dataset.baixar, b); });
+
+  function valores() { var v = {}; CAMPOS.forEach(function (c) { v[c] = $(c).value.trim(); }); return v; }
+  function preencher(v) { CAMPOS.forEach(function (c) { if (v[c] != null) $(c).value = v[c]; }); escolher(v.cod_ocorrencia || "", true); }
+  function salvarRascunho() { if (!S.editandoId && S.usuario) gravar(kRasc(), valores()); }
+
+  function escolher(cod, silencioso) {
+    $("cod_ocorrencia").value = cod;
+    var tem = !!S.oc[cod];
+    $("ocorrCod").textContent = tem ? cod : "?"; $("ocorrCod").className = "cod" + (tem ? "" : " cinza");
+    $("ocorrTxt").textContent = tem ? S.oc[cod] : "Toque para escolher na lista"; $("ocorrTxt").className = tem ? "" : "vazio";
+    $("ocorrBtn").classList.remove("invalido");
+    document.querySelectorAll("#favoritas .chip").forEach(function (c) { c.setAttribute("aria-pressed", c.dataset.cod === cod ? "true" : "false"); });
+    $("campoRecebedor").classList.toggle("oculto", tem && ENTREGUE.indexOf(cod) < 0);
+    if (!silencioso) salvarRascunho();
+  }
+  function validar(v) {
+    var erros = [];
+    document.querySelectorAll(".invalido").forEach(function (e) { e.classList.remove("invalido"); });
+    if (!/^\d{1,9}$/.test(v.numero_nf) || +v.numero_nf === 0) { erros.push("Informe o número da NF."); $("numero_nf").classList.add("invalido"); }
+    if (!S.oc[v.cod_ocorrencia]) { erros.push("Escolha a ocorrência."); $("ocorrBtn").classList.add("invalido"); }
+    if (!v.data_ocorrencia) { erros.push("Selecione a data."); $("data_ocorrencia").classList.add("invalido"); }
+    else if (v.data_ocorrencia > agoraData()) { erros.push("A data não pode ser futura."); $("data_ocorrencia").classList.add("invalido"); }
+    if (!v.hora_ocorrencia) { erros.push("Selecione o horário."); $("hora_ocorrencia").classList.add("invalido"); }
+    return erros;
+  }
+  function mostrarErro(m) { $("erroForm").textContent = m || ""; $("erroForm").classList.toggle("oculto", !m); }
+  function limparAposSalvar() {
+    ["numero_nf", "recebedor", "observacao", "numero_cte"].forEach(function (c) { $(c).value = ""; });
+    $("hora_ocorrencia").value = agoraHora(); salvarRascunho(); $("numero_nf").focus();
+  }
+  function sairEdicao() {
+    S.editandoId = null;
+    $("form").classList.remove("editando"); $("tituloForm").textContent = "Nova ocorrência";
+    $("salvarBtn").textContent = "Adicionar NF"; $("cancelarBtn").classList.add("oculto"); mostrarErro("");
+    var r = ler(kRasc(), null);
+    if (r) preencher(r); else { $("form").reset(); escolher("", true); $("data_ocorrencia").value = agoraData(); $("hora_ocorrencia").value = agoraHora(); }
+  }
+  function editar(id) {
+    var r = S.registros.filter(function (x) { return x.id === id; })[0]; if (!r) return;
+    salvarRascunho(); S.editandoId = id;
+    var v = {}; CAMPOS.forEach(function (c) { v[c] = r[c] == null ? "" : r[c]; }); v.numero_nf = nfCurta(r.numero_nf);
+    preencher(v);
+    $("form").classList.add("editando"); $("tituloForm").textContent = "Editando NF " + nfCurta(r.numero_nf);
+    $("salvarBtn").textContent = "Salvar alteração"; $("cancelarBtn").classList.remove("oculto");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  $("form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (S.enviando) return;
+    var v = valores(), erros = validar(v);
+    if (erros.length) { mostrarErro(erros.join(" ")); return; }
+    mostrarErro(""); S.enviando = true; $("salvarBtn").disabled = true; status("salvando", "Salvando…");
+    var fim = function () { S.enviando = false; $("salvarBtn").disabled = false; if (!$("erroForm").textContent) render(); };
+    if (S.editandoId) {
+      var idEd = S.editandoId;
+      run("editar", S.token, idEd, v).then(function () { toast("Alteração salva"); sairEdicao(); return carregar(idEd); })
+        .catch(function (e) { mostrarErro(e.rede ? "Sem conexão. A alteração não foi salva; tente de novo." : e.message); status("erro", "Não salvo"); })
+        .then(fim);
+      return;
+    }
+    v.client_uid = uid();
+    run("criar", S.token, v).then(function (j) {
+      toast(j.aviso ? j.aviso : "NF " + nfCurta(j.registro.numero_nf) + " salva", !!j.aviso);
+      limparAposSalvar(); return carregar(j.registro.id);
+    }).catch(function (e) {
+      if (e.sessao) return;
+      if (!e.rede) { mostrarErro(e.message); status("erro", "Não salvo"); return; }
+      var f = fila(); f.push(v); gravar(kFila(), f);
+      toast("Sem conexão. NF guardada no celular e será enviada automaticamente.");
+      limparAposSalvar();
+    }).then(fim);
+  });
+  $("cancelarBtn").addEventListener("click", sairEdicao);
+  $("agoraBtn").addEventListener("click", function () { $("data_ocorrencia").value = agoraData(); $("hora_ocorrencia").value = agoraHora(); salvarRascunho(); });
+  CAMPOS.forEach(function (c) { $(c).addEventListener("input", salvarRascunho); $(c).addEventListener("change", salvarRascunho); });
+  $("numero_nf").addEventListener("input", function () { this.value = this.value.replace(/\D/g, "").slice(0, 9); });
+
+  // ------------------------------------------------------------ folhas
+  function abrir(id) { $(id).classList.remove("oculto"); document.body.style.overflow = "hidden"; }
+  function fechar(id) { $(id).classList.add("oculto"); document.body.style.overflow = ""; }
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-fechar]"); if (b) { var f = b.closest(".fundo"); if (!f.dataset.travado) fechar(f.id); }
+  });
+  document.querySelectorAll(".fundo").forEach(function (f) { f.addEventListener("click", function (e) { if (e.target === f && !f.dataset.travado) fechar(f.id); }); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") document.querySelectorAll(".fundo:not(.oculto)").forEach(function (f) { if (!f.dataset.travado) fechar(f.id); }); });
+
+  function normal(s) { return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase(); }
+  function opcaoHTML(o, atual) {
+    return '<button type="button" class="opcao" role="option" data-cod="' + o.codigo + '" aria-selected="' + (o.codigo === atual) + '"><span class="cod peq">' + o.codigo + "</span><span>" + esc(o.descricao) + "</span></button>";
+  }
+  function listarOcorr() {
+    var q = normal($("busca").value.trim()), atual = $("cod_ocorrencia").value, html = "";
+    var achados = S.dados.ocorrencias.filter(function (o) { return !q || o.codigo.indexOf(q) === 0 || normal(o.descricao).indexOf(q) >= 0; });
+    if (!q && S.dados.favoritas.length) {
+      html += '<div class="grupo-tit">Mais usadas</div>';
+      S.dados.favoritas.forEach(function (c) { html += opcaoHTML({ codigo: c, descricao: S.oc[c] }, atual); });
+      html += '<div class="grupo-tit">Todas as ocorrências</div>';
+    }
+    achados.forEach(function (o) { html += opcaoHTML(o, atual); });
+    if (!achados.length) html = '<p class="vazio-lista" style="margin-top:12px">Nenhuma ocorrência encontrada para “' + esc($("busca").value) + "”.</p>";
+    $("listaOcorr").innerHTML = html;
+  }
+  $("ocorrBtn").addEventListener("click", function () { $("busca").value = ""; listarOcorr(); abrir("folhaOcorr"); $("listaOcorr").scrollTop = 0; });
+  $("busca").addEventListener("input", listarOcorr);
+  $("listaOcorr").addEventListener("click", function (e) { var b = e.target.closest(".opcao"); if (!b) return; escolher(b.dataset.cod); fechar("folhaOcorr"); });
+  $("favoritas").addEventListener("click", function (e) { var b = e.target.closest(".chip"); if (b) escolher(b.dataset.cod); });
+
+  // ------------------------------------------------------------ lista
+  function render(realceId) {
+    if (!S.usuario) return;
+    var f = fila(), html = "";
+    f.slice().reverse().forEach(function (v) {
+      html += '<li class="item"><span class="cod peq">' + esc(v.cod_ocorrencia) + '</span><div><div class="nf-num">NF ' + esc(nfCurta(v.numero_nf)) +
+        '<span class="tag pend">aguardando conexão</span></div><div class="desc">' + esc(S.oc[v.cod_ocorrencia]) + '</div><div class="meta">' + br(v.data_ocorrencia) + " às " + esc(v.hora_ocorrencia) + "</div></div><span></span></li>";
+    });
+    S.registros.forEach(function (r) {
+      var meta = br(r.data_ocorrencia) + " às " + esc(r.hora_ocorrencia) + (r.serie_nf ? " · série " + esc(r.serie_nf) : "");
+      if (r.recebedor) meta += "<br>Recebido por " + esc(r.recebedor);
+      if (r.observacao) meta += "<br>" + esc(r.observacao);
+      html += '<li class="item' + (r.id === realceId ? " realce" : "") + '"><span class="cod peq">' + r.cod_ocorrencia + '</span><div><div class="nf-num">NF ' + esc(nfCurta(r.numero_nf)) +
+        '</div><div class="desc">' + esc(r.descricao_ocorrencia) + '</div><div class="meta">' + meta + '</div></div><div class="acoes"><button class="btn-txt" data-editar="' + r.id +
+        '">Editar</button><button class="btn-txt btn-perigo" data-excluir="' + r.id + '">Excluir</button></div></li>';
+    });
+    $("lista").innerHTML = html;
+    var total = S.registros.length + f.length;
+    $("qtd").textContent = total + (total === 1 ? " nota" : " notas");
+    $("vazio").classList.toggle("oculto", total > 0);
+    var b = $("encerrarBtn");
+    b.disabled = !S.registros.length || f.length > 0;
+    b.textContent = f.length ? "Aguardando envio de " + f.length + " nota" + (f.length > 1 ? "s" : "") :
+      (S.registros.length ? "Encerrar e gerar arquivo (" + S.registros.length + ")" : "Encerrar e gerar arquivo");
+    if (f.length) status("offline", f.length + " no celular, aguardando conexão");
+    else if (!S.enviando) status("", "Tudo salvo");
+  }
+  $("lista").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.editar) editar(+b.dataset.editar);
+    if (b.dataset.excluir) {
+      if (b.dataset.confirmar) {
+        var id = +b.dataset.excluir; ocupado(b, true);
+        run("excluir", S.token, id).then(function () { toast("NF excluída"); if (S.editandoId === id) sairEdicao(); return carregar(); })
+          .catch(function (er) { toast(er.message, true); ocupado(b, false); });
+      } else {
+        b.dataset.confirmar = "1"; b.textContent = "Confirmar";
+        setTimeout(function () { if (b.isConnected) { delete b.dataset.confirmar; b.textContent = "Excluir"; } }, 3500);
+      }
+    }
+  });
+  function carregar(realceId) {
+    return run("abertos", S.token).then(function (j) { S.registros = j.registros; render(realceId); })
+      .catch(function (e) { if (e.rede) status("offline", "Sem conexão"); render(); });
+  }
+
+  var sincronizando = false;
+  function enviarFila() {
+    if (!S.usuario || !S.token) return;
+    var f = fila(); if (!f.length || sincronizando) return;
+    sincronizando = true;
+    var v = f[0];
+    run("criar", S.token, v).then(function () {
+      var g = fila(); g.shift(); gravar(kFila(), g); sincronizando = false;
+      if (g.length) enviarFila(); else { toast("Notas pendentes enviadas"); carregar(); }
+    }).catch(function (e) {
+      sincronizando = false;
+      if (e.servidor) { var g = fila(); g.shift(); gravar(kFila(), g); preencher(v); mostrarErro("NF " + v.numero_nf + " não foi aceita: " + e.message); render(); }
+    });
+  }
+  window.addEventListener("online", enviarFila);
+  setInterval(enviarFila, 15000);
+  setInterval(function () { if (!document.hidden && S.token && !S.editandoId && !$("vAp").classList.contains("oculto")) carregar(); }, 60000);
+
+  // ------------------------------------------------------------ encerrar
+  $("encerrarBtn").addEventListener("click", function () {
+    var n = S.registros.length, por = {};
+    S.registros.forEach(function (r) { por[r.cod_ocorrencia] = (por[r.cod_ocorrencia] || 0) + 1; });
+    $("tEnc").textContent = "Encerrar apontamento?";
+    $("encCorpo").innerHTML = "<p style='margin:0 0 6px'>Será gerado o arquivo OCOREN com <b>" + n + " nota" + (n > 1 ? "s" : "") +
+      "</b>. Depois de encerrado, este apontamento não poderá ser alterado.</p><ul class='lista'>" +
+      Object.keys(por).sort().map(function (c) { return '<li class="item" style="padding:8px 0"><span class="cod peq">' + c + "</span><div>" + esc(S.oc[c]) + "</div><b>" + por[c] + "</b></li>"; }).join("") + "</ul>";
+    $("encRodape").innerHTML = '<button class="btn btn-sec" data-fechar>Voltar</button><button class="btn btn-pri" id="confirmaEnc">Encerrar e gerar arquivo</button>';
+    abrir("folhaEnc");
+  });
+  $("encRodape").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.id === "novoAp") { fechar("folhaEnc"); return telaAp(); }
+    if (b.id === "baixarNovo") return baixarLote(+b.dataset.lote, b);
+    if (b.id !== "confirmaEnc") return;
+    ocupado(b, true, "Gerando arquivo…"); $("folhaEnc").dataset.travado = "1";
+    run("encerrar", S.token).then(function (j) {
+      $("tEnc").textContent = "Apontamento encerrado";
+      $("encCorpo").innerHTML = '<div class="sucesso"><div class="check" aria-hidden="true">✓</div><p style="margin:0">' + j.qtd + " nota" + (j.qtd > 1 ? "s enviadas e registradas" : " enviada e registrada") +
+        ' na planilha.</p><div class="arq">' + esc(j.arquivo) + '</div><p style="margin:0;font-size:14px;color:var(--marinho-2)">O arquivo foi salvo na pasta do Google Drive.</p></div>';
+      $("encRodape").innerHTML = '<button class="btn btn-sec" id="baixarNovo" data-lote="' + j.lote + '">Baixar TXT</button><button class="btn btn-pri" id="novoAp">Novo apontamento</button>';
+      S.registros = []; apagar(kRasc()); render();
+    }).catch(function (er) { toast(er.message, true); fechar("folhaEnc"); })
+      .then(function () { delete $("folhaEnc").dataset.travado; });
+  });
+
+  // ------------------------------------------------------------ administração
+  function telaAdmin(msg, erro) {
+    mostrar("vAdmin");
+    $("admConteudo").innerHTML = '<div class="carregando" style="min-height:30vh"><div><div class="giro"></div>Carregando…</div></div>';
+    run("admin", S.token).then(function (d) { S.adm = d; renderAdmin(msg, erro); })
+      .catch(function (e) { if (!e.sessao) $("admConteudo").innerHTML = '<div class="aviso erro">' + esc(e.message) + "</div>"; });
+  }
+  function aviso(msg, erro) { return msg ? '<div class="aviso ' + (erro ? "erro" : "ok") + '">' + esc(msg) + "</div>" : ""; }
+  function renderAdmin(msg, erro) {
+    var d = S.adm, c = d.config;
+    $("linkPlanilha").href = d.planilhaUrl; $("linkPasta").href = d.pastaUrl;
+    $("admMsg").innerHTML = aviso(msg, erro) + (c.config_revisada !== "1" ?
+      '<div class="aviso atencao">Revise os dados da transportadora e dos emissores em Configurações antes de enviar arquivos ao cliente. Eles vão no cabeçalho do TXT.</div>' : "");
+    $("admNumeros").innerHTML = [[d.stats.abertos, "NFs em apontamentos abertos"], [d.stats.hoje, "NFs encerradas hoje"], [d.stats.entregas, "entregas realizadas hoje"], [d.stats.motoristas, "motoristas ativos"]]
+      .map(function (x) { return '<div class="numero"><b>' + x[0] + "</b><span>" + x[1] + "</span></div>"; }).join("");
+    document.querySelectorAll("#abas a").forEach(function (a) { if (a.dataset.aba === S.aba) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
+    var h = "";
+    if (S.aba === "lotes") {
+      h = d.lotes.length ? '<div class="tabela-wrap"><table><thead><tr><th>Lote</th><th>Encerrado em</th><th>Motorista</th><th>NFs</th><th>Arquivo</th><th></th></tr></thead><tbody>' +
+        d.lotes.map(function (l) { return "<tr><td>" + l.id + "</td><td>" + esc(l.encerrado_em) + "</td><td>" + esc(l.nome) + "</td><td>" + l.qtd + "</td><td>" + esc(l.arquivo_txt) +
+          '</td><td style="white-space:nowrap"><button class="btn-txt" data-baixar="' + l.id + '">Baixar</button> <a href="' + esc(l.url) + '" target="_blank" rel="noopener">Abrir no Drive</a></td></tr>'; }).join("") + "</tbody></table></div>"
+        : '<div class="vazio-lista">Nenhum arquivo gerado ainda. Os TXT aparecem aqui quando um motorista encerra o apontamento.</div>';
+    } else if (S.aba === "abertos") {
+      h = d.abertos.length ? '<div class="tabela-wrap"><table><thead><tr><th>Motorista</th><th>NF</th><th>Ocorrência</th><th>Data/hora</th><th>Recebedor</th><th>Observação</th></tr></thead><tbody>' +
+        d.abertos.map(function (a) { return "<tr><td>" + esc(a.nome) + "</td><td>" + esc(nfCurta(a.numero_nf)) + (a.serie_nf ? "-" + esc(a.serie_nf) : "") + "</td><td>" + a.cod_ocorrencia + " – " + esc(a.descricao_ocorrencia) +
+          "</td><td>" + br(a.data_ocorrencia).slice(0, 5) + " " + esc(a.hora_ocorrencia) + "</td><td>" + esc(a.recebedor) + "</td><td>" + esc(a.observacao) + "</td></tr>"; }).join("") + "</tbody></table></div>"
+        : '<div class="vazio-lista">Nenhuma nota em aberto. Todos os apontamentos foram encerrados.</div>';
+    } else if (S.aba === "usuarios") {
+      h = '<form class="form" id="fNovoUs" style="margin-bottom:20px"><h3 style="font-size:16px;margin-bottom:12px">Novo usuário</h3><div class="grade-form">' +
+        '<div class="campo"><label for="nNome">Nome completo</label><input id="nNome" required></div>' +
+        '<div class="campo"><label for="nLogin">Usuário de acesso</label><input id="nLogin" autocapitalize="none" required></div>' +
+        '<div class="campo"><label for="nSenha">Senha inicial</label><input id="nSenha" required minlength="4"></div>' +
+        '<div class="campo"><label for="nPerfil">Perfil</label><select id="nPerfil"><option value="motorista">Motorista</option><option value="admin">Administrador</option></select></div>' +
+        '</div><button class="btn btn-pri">Criar usuário</button></form>' +
+        '<div class="tabela-wrap"><table><thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>NFs abertas</th><th>Redefinir senha</th><th></th></tr></thead><tbody>' +
+        d.usuarios.map(function (u) {
+          return "<tr><td>" + esc(u.nome) + "</td><td>" + esc(u.login) + '</td><td><span class="badge ' + (u.perfil === "admin" ? "admin" : "") + '">' + (u.perfil === "admin" ? "Administrador" : "Motorista") + "</span>" +
+            (u.ativo ? "" : ' <span class="badge inativo">Inativo</span>') + "</td><td>" + u.abertos + '</td><td><form class="inline-form" data-senha="' + u.id + '"><input placeholder="nova senha" aria-label="Nova senha para ' + esc(u.login) +
+            '" minlength="4" required><button class="btn btn-sec">Redefinir</button></form></td><td><button class="btn-txt ' + (u.ativo ? "btn-perigo" : "") + '" data-ativo="' + u.id + '">' + (u.ativo ? "Desativar" : "Reativar") + "</button></td></tr>";
+        }).join("") + "</tbody></table></div>";
+    } else {
+      var campo = function (id, rot, val, extra) { return '<div class="campo"><label for="c_' + id + '">' + rot + '</label><input id="c_' + id + '" name="' + id + '" value="' + esc(val) + '" ' + (extra || "") + "></div>"; };
+      h = '<form class="form" id="fConfig"><h3 style="font-size:16px;margin-bottom:4px">Cabeçalho do arquivo OCOREN</h3><p style="margin:0 0 14px;font-size:14px;color:var(--marinho-2)">Registros 000 e 541 do layout PROCEDA 5.0.</p><div class="grade-form">' +
+        campo("remetente_nome", 'Remetente do arquivo <span class="dica">(até 35)</span>', c.remetente_nome, 'maxlength="35" required') +
+        campo("destinatario_nome", 'Destinatário do arquivo <span class="dica">(até 35)</span>', c.destinatario_nome, 'maxlength="35" required') +
+        campo("transportadora_cnpj", "CNPJ da transportadora", c.transportadora_cnpj, 'inputmode="numeric" required') +
+        campo("transportadora_nome", 'Razão social da transportadora <span class="dica">(até 50)</span>', c.transportadora_nome, 'maxlength="50" required') +
+        '</div><h3 style="font-size:16px;margin:10px 0 12px">Notas fiscais e CT-e</h3><div class="campo"><label for="c_emitentes">Emissores das NFs <span class="dica">(um por linha: CNPJ;Nome. O primeiro é o padrão)</span></label><textarea id="c_emitentes" name="emitentes" rows="3">' + esc(c.emitentes) + "</textarea></div>" +
+        '<div class="grade-form">' + campo("serie_nf_padrao", "Série padrão da NF", c.serie_nf_padrao, 'maxlength="3"') +
+        campo("filial_cte", 'Filial emissora CT-e <span class="dica">(opcional)</span>', c.filial_cte, 'maxlength="10"') + campo("serie_cte", "Série CT-e padrão", c.serie_cte, 'maxlength="5"') + "</div>" +
+        campo("favoritas", 'Ocorrências em destaque para o motorista <span class="dica">(códigos separados por vírgula)</span>', c.favoritas) +
+        '<button class="btn btn-pri">Salvar configurações</button></form>';
+    }
+    $("admConteudo").innerHTML = h;
+  }
+  $("abas").addEventListener("click", function (e) { var a = e.target.closest("a"); if (!a) return; e.preventDefault(); S.aba = a.dataset.aba; $("admMsg").innerHTML = ""; renderAdmin(); });
+  function acaoAdm(promessa, btn) {
+    if (btn) ocupado(btn, true);
+    promessa.then(function (r) { telaAdmin(r.msg); }).catch(function (e) { if (btn) ocupado(btn, false); $("admMsg").innerHTML = aviso(e.message, true); window.scrollTo(0, 0); });
+  }
+  $("admConteudo").addEventListener("submit", function (e) {
+    e.preventDefault(); var f = e.target, btn = f.querySelector("button");
+    if (f.id === "fNovoUs") acaoAdm(run("adminCriarUsuario", S.token, { nome: $("nNome").value, login: $("nLogin").value, senha: $("nSenha").value, perfil: $("nPerfil").value }), btn);
+    else if (f.dataset.senha) acaoAdm(run("adminAcaoUsuario", S.token, f.dataset.senha, "senha", f.querySelector("input").value), btn);
+    else if (f.id === "fConfig") { var o = {}; f.querySelectorAll("[name]").forEach(function (i) { o[i.name] = i.value; }); acaoAdm(run("adminSalvarConfig", S.token, o), btn); }
+  });
+  $("admConteudo").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    if (b.dataset.ativo) acaoAdm(run("adminAcaoUsuario", S.token, b.dataset.ativo, "ativo"), b);
+    if (b.dataset.baixar) baixarLote(+b.dataset.baixar, b);
+  });
+
+  // ------------------------------------------------------------ início
+  S.token = ler("fi_token", null);
+  if (!S.token) mostrar("vLogin");
+  else run("iniciar", S.token).then(function (d) {
+    definirUsuario(d.usuario);
+    if (d.usuario.trocar_senha) return telaSenha(true);
+    S.dados = d; S.oc = {}; d.ocorrencias.forEach(function (o) { S.oc[o.codigo] = o.descricao; });
+    montarAp(d); mostrar("vAp"); enviarFila();
+  }).catch(function (e) { if (!e.sessao) sairLocal(e.rede ? "Sem conexão. Verifique a internet e tente de novo." : e.message); });
+})();
+</script>
+</body>
+</html>

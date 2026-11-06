@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="csrf" content="{{ csrf }}">
+<title>{% block titulo %}Frete Interno{% endblock %} · Calibre</title>
+<link rel="icon" href="{{ url_for('static', filename='icone.png') }}">
+<link rel="apple-touch-icon" href="{{ url_for('static', filename='icone.png') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% if usuario and not sem_topo %}
+<header class="topo">
+  <div class="topo-in">
+    <a href="{{ url_for('apontamento') }}"><img src="{{ url_for('static', filename='logo.png') }}" alt="Calibre"></a>
+    <span class="app">Frete Interno</span>
+    <span class="esp"></span>
+    <button class="menu-btn" id="menuBtn" aria-haspopup="true" aria-expanded="false">
+      <span class="avatar" aria-hidden="true">{{ usuario['nome'][:1]|upper }}</span>
+      <span class="nome">{{ usuario['nome'].split(' ')[0] }}</span>
+    </button>
+    <nav class="menu oculto" id="menu">
+      <a href="{{ url_for('apontamento') }}">Apontamento</a>
+      {% if usuario['perfil'] == 'admin' %}<a href="{{ url_for('admin') }}">Administração</a>{% endif %}
+      <a href="{{ url_for('trocar_senha') }}">Trocar senha</a>
+      <a href="{{ url_for('logout') }}">Sair</a>
+    </nav>
+  </div>
+</header>
+<script>
+(function(){var b=document.getElementById('menuBtn'),m=document.getElementById('menu');
+b.addEventListener('click',function(e){e.stopPropagation();var o=m.classList.toggle('oculto');b.setAttribute('aria-expanded',!o);});
+document.addEventListener('click',function(){m.classList.add('oculto');b.setAttribute('aria-expanded','false');});})();
+</script>
+{% endif %}
+{% block corpo %}{% endblock %}
+</body>
+</html>

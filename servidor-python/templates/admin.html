@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block titulo %}Administração{% endblock %}
+{% block corpo %}
+<main class="pagina larga">
+  <div class="secao-titulo" style="margin-top:8px"><h2>Administração</h2>
+    <span class="aux"><a href="{{ url_for('admin_planilha') }}">Baixar planilha Excel</a></span></div>
+
+  {% with msgs = get_flashed_messages() %}{% for m in msgs %}<div class="aviso ok">{{ m }}</div>{% endfor %}{% endwith %}
+  {% if c.config_revisada != '1' %}
+  <div class="aviso atencao">Revise os dados da transportadora e dos emissores em <a href="{{ url_for('admin', aba='config') }}">Configurações</a> antes de enviar arquivos ao cliente. Eles vão no cabeçalho do TXT.</div>
+  {% endif %}
+  {% if pendentes %}
+  <form method="post" action="{{ url_for('admin_sincronizar') }}" class="aviso atencao" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <input type="hidden" name="csrf" value="{{ csrf }}">
+    <span style="flex:1">{{ pendentes }} apontamento(s) ainda não gravados na planilha. Isso acontece quando o arquivo está aberto no Excel.</span>
+    <button class="btn btn-sec">Gravar agora</button>
+  </form>
+  {% endif %}
+
+  <div class="numeros">
+    <div class="numero"><b>{{ abertos|length }}</b><span>NFs em apontamentos abertos</span></div>
+    <div class="numero"><b>{{ stats.t or 0 }}</b><span>NFs encerradas hoje</span></div>
+    <div class="numero"><b>{{ stats.e or 0 }}</b><span>entregas realizadas hoje</span></div>
+    <div class="numero"><b>{{ usuarios|selectattr('ativo')|selectattr('perfil','equalto','motorista')|list|length }}</b><span>motoristas ativos</span></div>
+  </div>
+
+  <nav class="abas">
+    <a href="?aba=lotes" {% if aba=='lotes' %}aria-current="page"{% endif %}>Arquivos gerados</a>
+    <a href="?aba=abertos" {% if aba=='abertos' %}aria-current="page"{% endif %}>Em aberto</a>
+    <a href="?aba=usuarios" {% if aba=='usuarios' %}aria-current="page"{% endif %}>Usuários</a>
+    <a href="?aba=config" {% if aba=='config' %}aria-current="page"{% endif %}>Configurações</a>
+  </nav>
+
+  {% if aba == 'lotes' %}
+    {% if lotes %}
+    <div class="tabela-wrap"><table>
+      <thead><tr><th>Lote</th><th>Encerrado em</th><th>Motorista</th><th>NFs</th><th>Arquivo</th><th></th></tr></thead>
+      <tbody>
+      {% for l in lotes %}
+      <tr><td>{{ l.id }}</td><td>{{ l.encerrado_em[8:10] }}/{{ l.encerrado_em[5:7] }}/{{ l.encerrado_em[:4] }} {{ l.encerrado_em[11:16] }}</td>
+        <td>{{ l.nome }}</td><td>{{ l.qtd }}</td><td>{{ l.arquivo_txt }}</td>
+        <td><a href="{{ url_for('baixar_txt', lote_id=l.id) }}">Baixar</a></td></tr>
+      {% endfor %}
+      </tbody></table></div>
+    {% else %}
+    <div class="vazio-lista">Nenhum arquivo gerado ainda. Os TXT aparecem aqui quando um motorista encerra o apontamento.</div>
+    {% endif %}
+    <p class="caminho">Pasta dos TXT: {{ pasta_txt }}<br>Planilha: {{ planilha }}</p>
+
+  {% elif aba == 'abertos' %}
+    {% if abertos %}
+    <div class="tabela-wrap"><table>
+      <thead><tr><th>Motorista</th><th>NF</th><th>Ocorrência</th><th>Data/hora</th><th>Recebedor</th><th>Observação</th></tr></thead>
+      <tbody>
+      {% for a in abertos %}
+      <tr><td>{{ a.nome }}</td><td>{{ a.numero_nf|int }}{% if a.serie_nf %}-{{ a.serie_nf }}{% endif %}</td>
+        <td>{{ a.cod_ocorrencia }} – {{ a.descricao_ocorrencia }}</td>
+        <td>{{ a.data_ocorrencia[8:10] }}/{{ a.data_ocorrencia[5:7] }} {{ a.hora_ocorrencia }}</td>
+        <td>{{ a.recebedor or '' }}</td><td>{{ a.observacao or '' }}</td></tr>
+      {% endfor %}
+      </tbody></table></div>
+    {% else %}
+    <div class="vazio-lista">Nenhuma nota em aberto. Todos os apontamentos foram encerrados.</div>
+    {% endif %}
+
+  {% elif aba == 'usuarios' %}
+    <form method="post" action="{{ url_for('admin_usuario_novo') }}" class="form" style="margin-bottom:20px">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <h3 style="font-size:16px;margin-bottom:12px">Novo usuário</h3>
+      <div class="grade-form">
+        <div class="campo"><label for="n_nome">Nome completo</label><input id="n_nome" name="nome" required></div>
+        <div class="campo"><label for="n_login">Usuário de acesso</label><input id="n_login" name="login" autocapitalize="none" required></div>
+        <div class="campo"><label for="n_senha">Senha inicial</label><input id="n_senha" name="senha" required minlength="4"></div>
+        <div class="campo"><label for="n_perfil">Perfil</label><select id="n_perfil" name="perfil"><option value="motorista">Motorista</option><option value="admin">Administrador</option></select></div>
+      </div>
+      <button class="btn btn-pri">Criar usuário</button>
+    </form>
+    <div class="tabela-wrap"><table>
+      <thead><tr><th>Nome</th><th>Usuário</th><th>Perfil</th><th>NFs abertas</th><th>Redefinir senha</th><th></th></tr></thead>
+      <tbody>
+      {% for u in usuarios %}
+      <tr><td>{{ u.nome }}</td><td>{{ u.login }}</td>
+        <td><span class="badge {{ 'admin' if u.perfil=='admin' }}">{{ 'Administrador' if u.perfil=='admin' else 'Motorista' }}</span>
+            {% if not u.ativo %}<span class="badge inativo">Inativo</span>{% endif %}</td>
+        <td>{{ u.abertos }}</td>
+        <td><form method="post" action="{{ url_for('admin_usuario_acao', uid=u.id) }}" class="inline-form">
+          <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="acao" value="senha">
+          <input name="senha" placeholder="nova senha" aria-label="Nova senha para {{ u.login }}" minlength="4" required>
+          <button class="btn btn-sec">Redefinir</button></form></td>
+        <td><form method="post" action="{{ url_for('admin_usuario_acao', uid=u.id) }}">
+          <input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="acao" value="ativo">
+          <button class="btn-txt {{ 'btn-perigo' if u.ativo }}">{{ 'Desativar' if u.ativo else 'Reativar' }}</button></form></td></tr>
+      {% endfor %}
+      </tbody></table></div>
+
+  {% elif aba == 'config' %}
+    <form method="post" action="{{ url_for('admin_config') }}" class="form">
+      <input type="hidden" name="csrf" value="{{ csrf }}">
+      <h3 style="font-size:16px;margin-bottom:4px">Cabeçalho do arquivo OCOREN</h3>
+      <p style="margin:0 0 14px;font-size:14px;color:var(--marinho-2)">Registros 000 e 541 do layout PROCEDA 5.0.</p>
+      <div class="grade-form">
+        <div class="campo"><label for="c1">Remetente do arquivo <span class="dica">(até 35)</span></label><input id="c1" name="remetente_nome" maxlength="35" value="{{ c.remetente_nome }}" required></div>
+        <div class="campo"><label for="c2">Destinatário do arquivo <span class="dica">(até 35)</span></label><input id="c2" name="destinatario_nome" maxlength="35" value="{{ c.destinatario_nome }}" required></div>
+        <div class="campo"><label for="c3">CNPJ da transportadora</label><input id="c3" name="transportadora_cnpj" inputmode="numeric" value="{{ c.transportadora_cnpj }}" required></div>
+        <div class="campo"><label for="c4">Razão social da transportadora <span class="dica">(até 50)</span></label><input id="c4" name="transportadora_nome" maxlength="50" value="{{ c.transportadora_nome }}" required></div>
+      </div>
+      <h3 style="font-size:16px;margin:10px 0 12px">Notas fiscais e CT-e</h3>
+      <div class="campo"><label for="c5">Emissores das NFs <span class="dica">(um por linha: CNPJ;Nome. O primeiro é o padrão)</span></label>
+        <textarea id="c5" name="emitentes" rows="3">{{ c.emitentes }}</textarea></div>
+      <div class="grade-form">
+        <div class="campo"><label for="c6">Série padrão da NF</label><input id="c6" name="serie_nf_padrao" maxlength="3" value="{{ c.serie_nf_padrao }}"></div>
+        <div class="campo"><label for="c7">Filial emissora CT-e <span class="dica">(opcional)</span></label><input id="c7" name="filial_cte" maxlength="10" value="{{ c.filial_cte }}"></div>
+        <div class="campo"><label for="c8">Série CT-e padrão</label><input id="c8" name="serie_cte" maxlength="5" value="{{ c.serie_cte }}"></div>
+      </div>
+      <div class="campo"><label for="c9">Ocorrências em destaque para o motorista <span class="dica">(códigos separados por vírgula)</span></label>
+        <input id="c9" name="favoritas" value="{{ c.favoritas }}"></div>
+      <button class="btn btn-pri">Salvar configurações</button>
+    </form>
+  {% endif %}
+</main>
+{% endblock %}
